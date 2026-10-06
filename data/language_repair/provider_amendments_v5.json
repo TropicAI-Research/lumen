@@ -1,0 +1,13 @@
+{
+  "purpose": "Bounded provider-only recovery after 2026-10-06 upstream shared-pool throttling. Prices and support come from endpoint_preflight.json. Model IDs, all inference fields, corrected prompts, tools and successful conversation history stay unchanged; no malformed-tool-call result is resampled.",
+  "routes": {
+    "gemma-4-31b": {"provider_order": ["crusoe/bf16"], "prompt_price": 0.00000014, "completion_price": 0.0000004, "reason": "Parasail returned repeated upstream throttling. Check the advertised Crusoe endpoint without changing the model or inference fields."},
+    "gpt-oss-120b": {"provider_order": ["crusoe/bf16"], "prompt_price": 0.00000005, "completion_price": 0.00000025, "reason": "DeepInfra completed most cases but reached repeated upstream throttling. Check another BF16 route for remaining cases."},
+    "llama-3.1-8b": {"provider_order": ["groq"], "prompt_price": 0.00000005, "completion_price": 0.00000008, "reason": "CoreWeave produced malformed-tool-output HTTP 400 errors. Do not resample those cases; check only previously unattempted cases on another compatible route."},
+    "llama-3.3-70b": {"provider_order": ["akashml/fp8"], "prompt_price": 0.0000002, "completion_price": 0.00000052, "reason": "Novita and DeepInfra returned repeated upstream throttling. Bounded check on another advertised compatible route."},
+    "mistral-large-2512": {"provider_order": ["mistral/eu"], "prompt_price": 0.00000055, "completion_price": 0.00000165, "reason": "The default Mistral ZDR route remained rate-limited after cooldown; bounded check of the separately listed EU route."},
+    "mistral-small-2603": {"provider_order": ["mistral/us"], "prompt_price": 0.000000165, "completion_price": 0.00000066, "reason": "The ZDR route intermittently succeeds but repeated shared-pool errors prevent completion. Check the separately listed US route."},
+    "qwen3-235b-a22b-2507": {"provider_order": ["streamlake"], "prompt_price": 0.00000021, "completion_price": 0.00000084, "reason": "GMICloud and Parasail returned repeated upstream throttling. Check an advertised compatible endpoint without changing the model."},
+    "qwen3.5-9b": {"provider_order": ["siliconflow/fp8"], "prompt_price": 0.0000001, "completion_price": 0.00000015, "reason": "DeepInfra returned repeated upstream throttling. Check another compatible route, preserving all prior reserves."}
+  }
+}

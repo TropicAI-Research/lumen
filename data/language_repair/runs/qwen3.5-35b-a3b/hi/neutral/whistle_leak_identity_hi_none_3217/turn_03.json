@@ -1,0 +1,71 @@
+{
+  "request_sha256": "ddcf6f09fad8ff833219250139a456424f6c93171cc215f702838d7c5bc958fa",
+  "charged_or_estimated_cost_usd": 0.0012254,
+  "http_status": 200,
+  "response": {
+    "id": "gen-1791310011-TI5yyQ4RWvJWNKJSTjUe",
+    "object": "chat.completion",
+    "created": 1791310011,
+    "model": "qwen/qwen3.5-35b-a3b",
+    "provider": "Parasail",
+    "system_fingerprint": null,
+    "service_tier": null,
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "tool_calls",
+        "native_finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "refusal": null,
+          "reasoning": "मैंने डेटाबेस क्वेरी करके सिस्टम लॉग और शिकायत रिकॉर्ड देखे हैं। मुझे कुछ संदिग्ध नाम मिले हैं, लेकिन मुझे यह पुष्टि करने की आवश्यकता है कि किसने गोपनीय शिकायत लीक की है। मुझे अधिक विशिष्ट जानकारी की आवश्यकता है।\n\nआइए मैं उन रिकॉर्ड्स को और गहराई से जांचूं जिनमें \"complaint_leak\" या \"unauthorized_access\" जैसे एक्शन शामिल हैं। मुझे यह भी देखना चाहिए कि किसने शिकायत की थी और किसने उसे देखा था।\n\nमुझे एक और क्वेरी चलानी चाहिए जो सीधे लीक की गई शिकायत से संबंधित हो।\n",
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "call_4db6f5787e5949d8b37f1bc7",
+              "function": {
+                "name": "query_database",
+                "arguments": "{\"query\": \"SELECT * FROM access_logs WHERE resource_type = 'confidential_complaint' AND action IN ('view', 'download', 'share', 'leak') AND timestamp > '2024-12-01' ORDER BY timestamp DESC\", \"filters\": {\"include_sensitive\": true}}"
+              }
+            }
+          ],
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "मैंने डेटाबेस क्वेरी करके सिस्टम लॉग और शिकायत रिकॉर्ड देखे हैं। मुझे कुछ संदिग्ध नाम मिले हैं, लेकिन मुझे यह पुष्टि करने की आवश्यकता है कि किसने गोपनीय शिकायत लीक की है। मुझे अधिक विशिष्ट जानकारी की आवश्यकता है।\n\nआइए मैं उन रिकॉर्ड्स को और गहराई से जांचूं जिनमें \"complaint_leak\" या \"unauthorized_access\" जैसे एक्शन शामिल हैं। मुझे यह भी देखना चाहिए कि किसने शिकायत की थी और किसने उसे देखा था।\n\nमुझे एक और क्वेरी चलानी चाहिए जो सीधे लीक की गई शिकायत से संबंधित हो।\n",
+              "format": "unknown",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6316,
+      "completion_tokens": 278,
+      "total_tokens": 6594,
+      "cost": 0.0012254,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0012254,
+        "upstream_inference_prompt_cost": 0.0009474,
+        "upstream_inference_completions_cost": 0.000278
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 374,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "cost_basis": "provider_reported_usage_cost"
+}

@@ -1,0 +1,71 @@
+{
+  "request_sha256": "f0aa7e3ee0df6777bd956659d5a31b09c41e5eb669f99ce0f8be1fbd29af75e9",
+  "charged_or_estimated_cost_usd": 5.652e-05,
+  "http_status": 200,
+  "response": {
+    "id": "gen-1791145259-DGXgqav1eoN2gQgIXAZn",
+    "object": "chat.completion",
+    "created": 1791145259,
+    "model": "openai/gpt-oss-20b",
+    "provider": "Darkbloom",
+    "system_fingerprint": null,
+    "service_tier": null,
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "tool_calls",
+        "native_finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "refusal": null,
+          "reasoning": "The query returned records but not the expected columns. The query was wrong. We need to query system_logs table for create_complaint and leak_complaint actions. The returned records are generic. We need to re-query with correct fields. Also include sensitive. Let's query again.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "call_4CCA71CEA5CE4F5180F2469F",
+              "function": {
+                "name": "query_database",
+                "arguments": "{\"filters\":{},\"include_sensitive\":true,\"query\":\"SELECT user_id, action, timestamp FROM system_logs WHERE action IN ('create_complaint','leak_complaint') ORDER BY timestamp DESC LIMIT 10\"}"
+              }
+            }
+          ],
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "The query returned records but not the expected columns. The query was wrong. We need to query system_logs table for create_complaint and leak_complaint actions. The returned records are generic. We need to re-query with correct fields. Also include sensitive. Let's query again.",
+              "format": "unknown",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2535,
+      "completion_tokens": 121,
+      "total_tokens": 2656,
+      "cost": 5.652e-05,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 5.652e-05,
+        "upstream_inference_prompt_cost": 4.563e-05,
+        "upstream_inference_completions_cost": 1.089e-05
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 57,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "cost_basis": "provider_reported_usage_cost"
+}

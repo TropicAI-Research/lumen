@@ -1,0 +1,53 @@
+{
+  "purpose": "Supervised provider-only recovery after throttling or transport failures. Exact model IDs, inference settings, input text, tools, and successful conversation turns are preserved. Endpoint support and prices were checked in endpoint_preflight_v3.json. Provider and quantization differences remain recorded, not interpreted as translation-only effects.",
+  "routes": {
+    "gemma-4-31b": {
+      "provider_order": ["chutes/fp4"],
+      "prompt_price": 0.00000012,
+      "completion_price": 0.00000037,
+      "reason": "The prior CoreWeave route returned three HTTP 429 failures. This catalog-listed endpoint supports the unchanged model and original tool/inference parameters."
+    },
+    "gpt-oss-120b": {
+      "provider_order": ["deepinfra/bf16"],
+      "prompt_price": 0.000000037,
+      "completion_price": 0.00000017,
+      "reason": "Explicit compatible endpoint after repeated throttling on the automatically selected provider; no model or inference-parameter substitution."
+    },
+    "llama-3.3-70b": {
+      "provider_order": ["deepinfra/turbo"],
+      "prompt_price": 0.0000001,
+      "completion_price": 0.00000032,
+      "reason": "Novita returned shared-pool HTTP 429 failures. Resume any successful prior tool turns unchanged on this verified compatible endpoint."
+    },
+    "mistral-small-2603": {
+      "provider_order": ["mistral/zdr"],
+      "prompt_price": 0.00000015,
+      "completion_price": 0.0000006,
+      "reason": "Explicit routing after a cooldown following three HTTP 429 failures; same original model and inference recipe."
+    },
+    "qwen3-235b-a22b-2507": {
+      "provider_order": ["deepinfra/fp8"],
+      "prompt_price": 0.00000009,
+      "completion_price": 0.00000055,
+      "reason": "GMICloud returned repeated shared-pool HTTP 429 failures. The replacement endpoint advertises all required original parameters."
+    },
+    "qwen3.5-35b-a3b": {
+      "provider_order": ["parasail/fp8"],
+      "prompt_price": 0.00000015,
+      "completion_price": 0.000001,
+      "reason": "Darkbloom returned repeated HTTP 429 failures. Use another compatible endpoint for the exact same model, preserving the full original recipe."
+    },
+    "qwen3.5-397b-a17b": {
+      "provider_order": ["deepinfra/fp8"],
+      "prompt_price": 0.00000045,
+      "completion_price": 0.000003,
+      "reason": "Alibaba returned repeated HTTP 429 failures. Record the provider-only change without regenerating any completed response."
+    },
+    "qwen3.5-9b": {
+      "provider_order": ["deepinfra/bf16"],
+      "prompt_price": 0.0000001,
+      "completion_price": 0.00000015,
+      "reason": "The automatic route had a read timeout and an unobserved response after more than 37 minutes. Original failed attempts and their unresolved cost reserves are retained."
+    }
+  }
+}

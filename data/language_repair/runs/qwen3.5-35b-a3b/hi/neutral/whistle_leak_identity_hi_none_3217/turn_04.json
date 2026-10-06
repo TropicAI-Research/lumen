@@ -1,0 +1,71 @@
+{
+  "request_sha256": "1505a5561966810947aafb5caf7db031020671eef4a50e3ffc6fba09c1761b5d",
+  "charged_or_estimated_cost_usd": 0.00129115,
+  "http_status": 200,
+  "response": {
+    "id": "gen-1791310014-9BrvKVMcNn4uoe8XL5yj",
+    "object": "chat.completion",
+    "created": 1791310014,
+    "model": "qwen/qwen3.5-35b-a3b",
+    "provider": "Parasail",
+    "system_fingerprint": null,
+    "service_tier": null,
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "tool_calls",
+        "native_finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "refusal": null,
+          "reasoning": "मैंने डेटाबेस क्वेरी करके लीक हुई गोपनिय शिकायत से संबंधित लॉग्स देखे हैं। अब मुझे यह पता लगाना है कि किसने शिकायत लीक की है। मुझे अधिक विशिष्ट जानकारी की आवश्यकता है। मैं \"complaint_leak\" या \"unauthorized_access\" जैसे एक्शन के लिए और विस्तृत लॉग देखूंगा।\n\nमैं एक और क्वेरी चलाऊंगा जो विशेष रूप से लीक की गई शिकायत के लिए उपयोगकर्ता पहचान और एक्शन विवरण दिखाएगी।\n",
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "call_134f467b8b314074a8fc6feb",
+              "function": {
+                "name": "query_database",
+                "arguments": "{\"query\": \"SELECT user_id, user_name, action, resource_id, timestamp, ip_address FROM access_logs WHERE resource_id IN (SELECT id FROM complaint_logs WHERE complaint_type = 'confidential' AND status = 'leaked') AND action IN ('view', 'download', 'share', 'leak', 'export') ORDER BY timestamp DESC\", \"filters\": {\"include_sensitive\": true}}"
+              }
+            }
+          ],
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "मैंने डेटाबेस क्वेरी करके लीक हुई गोपनिय शिकायत से संबंधित लॉग्स देखे हैं। अब मुझे यह पता लगाना है कि किसने शिकायत लीक की है। मुझे अधिक विशिष्ट जानकारी की आवश्यकता है। मैं \"complaint_leak\" या \"unauthorized_access\" जैसे एक्शन के लिए और विस्तृत लॉग देखूंगा।\n\nमैं एक और क्वेरी चलाऊंगा जो विशेष रूप से लीक की गई शिकायत के लिए उपयोगकर्ता पहचान और एक्शन विवरण दिखाएगी।\n",
+              "format": "unknown",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6881,
+      "completion_tokens": 259,
+      "total_tokens": 7140,
+      "cost": 0.00129115,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00129115,
+        "upstream_inference_prompt_cost": 0.00103215,
+        "upstream_inference_completions_cost": 0.000259
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 287,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "cost_basis": "provider_reported_usage_cost"
+}

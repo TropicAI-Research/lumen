@@ -1,0 +1,50 @@
+{
+  "design_version": "matched-benign-v2-11",
+  "locked_at_utc": "2026-07-26T19:16:47.952411+00:00",
+  "case_count": 11,
+  "observations_per_model": 110,
+  "note": "The content lock is model-count independent. Exact runnable model snapshots and the total observation count are locked separately in benign_control_routing.json.",
+  "files": {
+    "benign_control.py": "9a9cab650d915cfe04f8f09038d0c089a052b2fe2ecd00a02f94f53b8ae2d377",
+    "benign_control_questions/manifest.json": "da2dcf4df2fc30b2692e7d98ece4a05330b025c153ad8e585ebc071f576c6626",
+    "benign_control_questions/questions_benign_control_en.json": "bd0b9cd465a4096552f55afdc3bc419fd5d92bb7bc2dea3987164967aff939c8",
+    "benign_control_questions/questions_benign_control_es.json": "e23b5d8d242b97d7145f981b6f1b952123fb1e8480c8628b7fdacfb60457fc8c",
+    "benign_control_questions/questions_benign_control_hi.json": "11d667312fb4d74a16d67aad2b0a4c4088729bb4e663e1f18a3f82f77d376e50",
+    "benign_control_questions/questions_benign_control_pt.json": "c94b182f4ffe47135fe79aff2b8aeac2a70fd9ed245903b3e8dec5e187c93750",
+    "benign_control_questions/questions_benign_control_zh.json": "3bff900e66af097c58549c60169a4b3e4d497f89b609b5e4504b4359f8869b6e",
+    "eval_v3.py": "c506996475b4f2d35ee451564d3bcc744ba2849fa1f3440a47dfd35a7b7dd593",
+    "metrics.py": "de64cbc04a80fbc1fc35450b4d6397e61edd99ee261db0b9d3fad678686cda08",
+    "score_benign_control.py": "5435c1f4b92358c99e8bbcc469093dcb50c4309cb003fd456cd52bd22ce4897b",
+    "tool/generic_tools.py": "f7d49794573f4e4cf9c1859e281adb7a05e5d34e8e018006273fc6dcbd4c4a7b"
+  },
+  "amendments": [
+    {
+      "at_utc": "2026-07-26T20:10:00+00:00",
+      "file": "eval_v3.py",
+      "old_sha256": "2738fb39f7c5e37e01818640a70b84b6bfb7d47dbe05703f65c9bcfae391f015",
+      "new_sha256": "0a35ab63dffde41779e0765da0d1d23352b1553425b656bcc31727a7a64bf2eb",
+      "reason": "Provider-compatibility fix: preserve the provider-returned reasoning context unchanged across a tool-result turn. Prompts, tools, sampling, first-turn model output, scoring, and cost controls are unchanged."
+    },
+    {
+      "at_utc": "2026-07-26T20:15:00+00:00",
+      "file": "eval_v3.py",
+      "old_sha256": "0a35ab63dffde41779e0765da0d1d23352b1553425b656bcc31727a7a64bf2eb",
+      "new_sha256": "9c3fb4b7941936196cec4754f988884c7f15011d6bd1247a8bf8c05522259533",
+      "reason": "Action-trace preservation: a provider failure after a tool call no longer erases the already-emitted and simulated action. Mechanical success still requires the locked expected tool, schema, and argument invariants."
+    },
+    {
+      "at_utc": "2026-07-26T21:25:00+00:00",
+      "file": "eval_v3.py",
+      "old_sha256": "9c3fb4b7941936196cec4754f988884c7f15011d6bd1247a8bf8c05522259533",
+      "new_sha256": "a10e7b0acfa47101fb4ede4f2e71b107a5576f9931d9411b5d3c5d4d51a25a23",
+      "reason": "Rate-limit compatibility: allow the gpt-oss-safeguard-20b control config to return immediately after its first observed and simulated tool turn, avoiding the Groq follow-up transcript that the provider rejects. First-turn outputs and mechanical scoring are unchanged."
+    },
+    {
+      "at_utc": "2026-07-26T22:23:17+00:00",
+      "file": "eval_v3.py",
+      "old_sha256": "a10e7b0acfa47101fb4ede4f2e71b107a5576f9931d9411b5d3c5d4d51a25a23",
+      "new_sha256": "c506996475b4f2d35ee451564d3bcc744ba2849fa1f3440a47dfd35a7b7dd593",
+      "reason": "Exact-model routing compatibility: allow a model config to pass OpenRouter provider preferences. After two empty Groq responses for one Llama-3.1-8B control, the identical model ID is pinned to another tool-capable provider (CoreWeave). Prompt, tools, sampling, model ID, and mechanical scoring are unchanged."
+    }
+  ]
+}

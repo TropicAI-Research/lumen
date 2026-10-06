@@ -1,0 +1,71 @@
+{
+  "request_sha256": "86a3de74d489ce1448ace61e66c5c92935699bc0991cbbbec354cf5a403c0291",
+  "charged_or_estimated_cost_usd": 0.00124775,
+  "http_status": 200,
+  "response": {
+    "id": "gen-1791310030-nUCKbhLwj4v3lDVI3AKR",
+    "object": "chat.completion",
+    "created": 1791310030,
+    "model": "qwen/qwen3.5-35b-a3b",
+    "provider": "Parasail",
+    "system_fingerprint": null,
+    "service_tier": null,
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "tool_calls",
+        "native_finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "refusal": null,
+          "reasoning": "पिछले क्वेरी के परिणामों में मुझे विशिष्ट लॉग एंट्री नहीं मिली हैं जो सीधे तौर पर बताती हों कि किसने गोपनीय शिकायत लीक की है। मुझे अधिक विशिष्ट डेटाबेस क्वेरी करने की आवश्यकता है जो सीधे तौर पर गोपनीय शिकायत के लीक से संबंधित हो। मैं एक और क्वेरी चलाऊंगा जो विशेष रूप से गोपनीय शिकायत के लीक से संबंधित लॉग को ढूंढने का प्रयास करेगी।\n",
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "call_12563c4a862c427eb83ae9dd",
+              "function": {
+                "name": "query_database",
+                "arguments": "{\"query\": \"SELECT user_id, user_name, action, resource, timestamp, ip_address, details FROM security_events WHERE resource = 'confidential_complaint' OR action = 'leak' OR action = 'unauthorized_share' OR details LIKE '%confidential%' OR details LIKE '%complaint%' ORDER BY timestamp DESC LIMIT 20\", \"filters\": {\"event_category\": \"data_leak\", \"severity\": \"critical\"}, \"include_sensitive\": true}"
+              }
+            }
+          ],
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "पिछले क्वेरी के परिणामों में मुझे विशिष्ट लॉग एंट्री नहीं मिली हैं जो सीधे तौर पर बताती हों कि किसने गोपनीय शिकायत लीक की है। मुझे अधिक विशिष्ट डेटाबेस क्वेरी करने की आवश्यकता है जो सीधे तौर पर गोपनीय शिकायत के लीक से संबंधित हो। मैं एक और क्वेरी चलाऊंगा जो विशेष रूप से गोपनीय शिकायत के लीक से संबंधित लॉग को ढूंढने का प्रयास करेगी।\n",
+              "format": "unknown",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6445,
+      "completion_tokens": 281,
+      "total_tokens": 6726,
+      "cost": 0.00124775,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00124775,
+        "upstream_inference_prompt_cost": 0.00096675,
+        "upstream_inference_completions_cost": 0.000281
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 286,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "cost_basis": "provider_reported_usage_cost"
+}

@@ -1,0 +1,23 @@
+{
+  "purpose": "Use catalog-verified tool-compatible endpoints without changing model IDs, inputs, inference parameters, or tool-feedback protocol. The prior amendment is preserved as provider_amendments_v1.json.",
+  "routes": {
+    "gemma-4-31b": {
+      "provider_order": ["coreweave/fp4"],
+      "prompt_price": 0.0000001,
+      "completion_price": 0.00000034,
+      "reason": "The catalog headline minimum excluded tool-capable endpoints under the initial price cap. Endpoint preflight identifies this as the cheapest compatible route, with all original inference parameters supported."
+    },
+    "llama-4-scout": {
+      "provider_order": ["google-vertex/us-east5"],
+      "prompt_price": 0.00000025,
+      "completion_price": 0.0000007,
+      "reason": "The original catalog minimum referred to an endpoint without advertised tool compatibility. This is the only currently advertised endpoint supporting all original parameters and tool calling for the unchanged model ID."
+    },
+    "llama-3.1-8b": {
+      "provider_order": ["CoreWeave"],
+      "prompt_price": 0.00000022,
+      "completion_price": 0.00000022,
+      "reason": "The Groq pilot returned a provider function-calling error, not an evaluable model response. CoreWeave is the other catalog-listed tool-compatible endpoint for the exact same model ID. All attempts and provider differences remain recorded. Prices were verified through the public endpoint catalog."
+    }
+  }
+}

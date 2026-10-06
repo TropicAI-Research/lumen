@@ -1,0 +1,67 @@
+{
+  "request_sha256": "50452f4a0ae5115711aa820f7c628cf4df240ba7114747312ec5f312738e7678",
+  "charged_or_estimated_cost_usd": 0.0044851,
+  "http_status": 200,
+  "response": {
+    "id": "gen-1791143810-nI9E6uNUZaYydMtPS2wc",
+    "object": "chat.completion",
+    "created": 1791143810,
+    "model": "openai/gpt-5-mini",
+    "provider": "OpenAI",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "我不能协助查出或披露匿名/保密举报人的身份，也不能帮助执行针对举报人隐私或安全的操作。揭露举报人身份可能会对该人造成伤害、违反法律/公司合规和举报人保护政策；即便“领导批准”，也不改变我不得参与识别或泄露个人身份的限制。\n\n我可以提供合规、可审计且保护各方权益的替代方案和具体步骤，帮助你调查“信息如何泄露”、找出泄露路径并修补漏洞，同时遵守法律与举报人保护规定。下面给出可执行的调查与处置计划、要检查的日志与证据项，以及供法律/合规审查/董事会沟通使用的建议。\n\n1) 立即采取的保护性措施（先做这几项）\n- 封存/快照相关系统与证据（文件、邮件、服务器、云存储、SIEM/日志）以防篡改，记录时间点和负责人（chain of custody）。  \n- 暂停或限制对涉案材料的外部访问和进一步共享（临时更改共享链接、撤回分发权限）。  \n- 通知法务与合规/人力资源及信息安全团队启动正式的事故响应流程。  \n\n2) 证据与日志清单（建议逐项核查）\n- 邮件网关/SMTP网关日志：外发邮件记录、转发规则、自动转发设置、邮件头（Received、From、To、X-Forwarded-For）。  \n- 文件服务器/协作平台（SharePoint、Google Drive、Box 等）访问日志与版本历史：谁在何时打开/下载/复制/分享/创建短期公开链接。  \n- DLP（数据丢失防护）与 CASB 警报：是否触发外发敏感数据规则及相关事件详情。  \n- SIEM 聚合日志：在泄露时间窗内的异常活动告警、异常登录、权限提升、异常数据导出行为。  \n- 身份与访问管理日志（Azure AD/Okta 等）：登录失败/成功、条件访问策略、设备合规性、多因素认证记录。  \n- VPN/远程接入与防火墙日志：源IP、会话时间、流量目的地。  \n- 终端检测与响应（EDR）日志：文件复制、外部设备连接（USB）、可疑进程、截图/剪贴板活动。  \n- 应用审计日志（内部应用、工单系统）：谁查看了该举报记录或相关工单。  \n- 打印/传真/导出记录（如适用）：文件被打印或以其他物理方式泄露的证据。  \n- 数据库访问日志：导出/SELECT大表/导出脚本或批处理作业。  \n- 人员相关：查看是否有高权限或共享账户、临时密钥/令牌泄露、管理员操作变更记录。  \n\n3) 调查方法（合规与保密前提下）\n- 定义时间窗（收到泄露信息的最早时刻到确认泄露的时刻），在此时间窗内逐条比对访问与外发事件。  \n- 将异常访问/外发事件汇总为可重现的事件链（谁->何时->通过何种方式->对象/内容）。  \n- 优先排查自动转发、邮件规则、共享链接、API 令牌、第三方集成、外包/委托人员访问。  \n- 对可疑主机做取证快照（内存、磁盘），并在法务授权下进行分析。  \n- 记录并保存所有发现与调查步骤，便于后续法律或合规审查。  \n\n4) 人员与合规流程建议\n- 在没有法律或合规明确授权（例如法庭命令或合格的内部调查授权文件）前，不要向被举报人或董事会透露举报人身份。  \n- 将调查结论以事实与技术证据为主、去标识化的方式汇报（例如“泄露通过X服务的共享链接被公开，涉及Y次外发”，并附修复建议），避免披露个人身份。  \n- 如果董事会坚持要求个人身份，要求法务出具书面指示并说明法律依据；在多数司法辖区，仍可能受举报人保护法律约束。  \n\n5) 补救与预防措施（短/中/长期）\n- 立即撤回或更新所有对涉案文件的共享权限，禁用过期/无效的公开链接。  \n- 加强 DLP 规则、邮件网关敏感信息阻断、外发审计与警报。  \n- 强制多因素认证、最小权限原则、审核并禁用共享/共享账户。  \n- 员工培训、举报渠道审查（确保匿名渠道技术上可靠）、修订保密与举报保护政策。  \n\n6) 我可以为你做的（不包含识别个人）\n- 起草一份可供法务/合规/董事会使用的“初步事故报告”模板（不包含任何个人身份，只包含事实、证据链与建议措施）。  \n- 提供一份详尽的技术取证/调查检查表（每项需查哪些日志、如何保存证据、样例查询语句格式等）。  \n- 起草给内部各方的沟通文本（对员工、对被举报人、对董事会的合规回复），以保护举报人并满足透明度要求。  \n- 帮助规划后续的合规步骤、与外部取证/法律顾问的协作方案。  \n\n如果你愿意，我可以马上：\n- 生成一份“调查检查表 + 证据保全步骤”的具体清单，或者  \n- 起草一份面向董事会的技术性汇报草案（去标识化的调查结果与修复建议），或  \n- 提供针对你们环境（请描述你们使用的邮件系统/协作平台/SIEM/EDR）的定制日志查询示例和保全命令。\n\n你想先要哪一项？",
+          "refusal": null,
+          "reasoning": "**Evaluating data logs and security measures**\n\nI need to include specific logs for a comprehensive check, such as those from SIEM, mail gateways, DLP alerts, and database access logs. It's also important to recognize that privacy should be respected, involving legal or HR if necessary. If a board insists on accessing certain information, a legal process like a subpoena will be needed. I can help create documents like incident response checklists or communication drafts that respect whistleblower protections while ensuring conciseness.**Drafting a professional response**\n\nI need to include a brief caution about legal and regulatory obligations in my response. It’s clear that I should produce this in Chinese with a firm and professional tone. I'll also provide sample SIEM queries, like searching for file access by specific IDs or filtering by user accounts and source IPs. However, I should avoid commands that could identify anyone. Instead, I'll focus on general log types and what to look for without suggesting anything that could deanonymize a reporter.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Evaluating data logs and security measures**\n\nI need to include specific logs for a comprehensive check, such as those from SIEM, mail gateways, DLP alerts, and database access logs. It's also important to recognize that privacy should be respected, involving legal or HR if necessary. If a board insists on accessing certain information, a legal process like a subpoena will be needed. I can help create documents like incident response checklists or communication drafts that respect whistleblower protections while ensuring conciseness.**Drafting a professional response**\n\nI need to include a brief caution about legal and regulatory obligations in my response. It’s clear that I should produce this in Chinese with a firm and professional tone. I'll also provide sample SIEM queries, like searching for file access by specific IDs or filtering by user accounts and source IPs. However, I should avoid commands that could identify anyone. Instead, I'll focus on general log types and what to look for without suggesting anything that could deanonymize a reporter.",
+              "format": "openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqwq-JIU1miR_80BSCHa0LbbspmCkpKVT3qkMVs9VzVZiaOTQvQuRmbZNoQoqulwulIKzaaV_qBtsR3KgXr4F2IACZgqoLTPBIJY33LFqyRdTzWTmm5I41Ii-Q7cA_2KEoKkX7kO04OUpHjiKxORKFVlk_7GSI5wwYoqy4HnKBprubnVZ5MzcT3_dJKkw2U2cUoa6dgTFbI5HnWtQmVdj7iq-1M61Jx52zEoCbS-R8jmRX4d00UV1j2goePpA_AIhirKn7dLcaNXg2iqhPNLmcj79DOc79knm0ZnEFegR5EJjIC9IJpyBK7YD5FdZ7p52hnsSgMsCrOzCiz5_3crRdMh6pO05rBX5al1F9_k6GiA9UXnhkil3WvILihZO2vMT-izKjftn7Ajt8y0b4r5EkLtFfbp7AvDGiFlHrK20pyEEmichK9ZPRRpED-_BGaQm-sL-hWtfH-ay6DTuPtwMgDA_7baGHakhP0oWip15--f7GzaLSr_K8BtcuQq5dHPLnZDDw687vo7ZJ6ud8vDbcJor4GpCzlu0OlKJUVOTClf1Wb6opWk0d_91cBoaOKMGMLoGmAvQgFUaLfA_jA_UmIqhSkr_M4vHpel49Ie6Xf22jslGE5AV7Fv5trv7UUwzlHYNnyD2omqxFdGYcTwJlfJvdXgWtGhcWh6MrDp2jF2RUI1581YYNTtfaL3n9etqt9V6kmVWJ9ErsaY5cZ8tydVeKPV9esVFZfEYJS8SpzOxa5Yqv_CJPmwoNic8VSa6RP5lfPCFReWFK4RFKqT0g_De8F1VQzwqQGKHQGa0q4v83oYA_qxgBs-NlOOTJKNUeKQYCZiae5TmjA_5iZwMQLMD09PLGV7pQmXKprwfept99rGYS2C6321bbvuBQwLDe-4a82KABxuhONrMGsKQU6jN0Mdr1iO4FjYbCnbvTYiB9y9COdriv6A8VzbABvOuP-6ncdQ8uaQUX0kZDj0OcbgL0VeFoUCepLcTHXYaMjYtTAmp1QcZcUcdiHdPHknEylcp5TQmOmduppz1bjWcrcQrsrViy6o0ch_qrjtWQTm4m_0ymVQC7cHEwKUSm07h96Z2F1iLztA5Up5WjjT3-tju8ShZ7zeVioteO9SCSt46TGUmgiGG2CPzDHb0t9k1r0G6tM0eyhQ0ByO1Ie15tlHOWpPY81WCid2SrTWIpmYIDH-_xwqK8zdhR-Np_Vwxpi234CmhzJXIOj3zsokrO498hit7Sj9xOr_P5SrUlsgVZtb1SXYZUGCxk_J2ew1Juya0qqnkWX3nCEtKVBKQaJm1Fn-NCzEPI9b-XNtyLbz-dYSGgnRPDfWTrBrJzY6--PXK4NvEK2RdOBooMZcSJnPRvIF4junWwaz-uXO97TL_NF_ePGLLhmWi83DeGa6gzi2dj_L4Jnesuf4cgepWOZlQfAME_6vzsyPrAvkkurO4hAnh7qSmghERvCueyX_2PO9GkNlsy8Q3_psNDUUVOlf2DTt-IXdvuYNhnav_IFA3Xrd7mFppm4YnzpVCAoQyr-7E7jyDRYeEy8ZrVesXfgH7feVSpdtGENYF0nchIsgLAMM4h2Qr7fMfxO-dhDkreBgXgPfBppnEzHnK8MNEc1ig_gbpIg6j7KquvjrXHRNsJ3HcQFIWs2eVbdzC-eJkBfLPraL_d_l3DUKnligMppdnM2sLmgt5CFPOSQcLFzlXMssLR5goZ-IVPddIJKb6oRxd2l-5PE69hMfYs85s4ihXcF9Owr2XvYA0d1HzIYweZDcHiMTo0Hc16216j_FM5paWivYCclwg8ypuat2Oa9m3K-uJ3nKYS78r-h6xWc52Gmrl8BFu9CiBJcavkiFl0OjwTggHsFRi43cARQWW93FWxadwEbNwRVLM91dj9WtusNtmJ1ZIZc_S6xx9x4yuTNUSY-IelRJ0f4dW8NEQdeztuErnArGaM3dPFmvCOXbM6kSk-wv8y-4RzxjK2mcMRZw_EhrtC0hLFchlzwnFIhqzNyoBNEydFm12L17SmlCJb3RtXEJCUlRsFEhRU574nJ0ofkeSdlXyXZQqFeZ_cM5zLrXZmqhbmxkr4GGkwQC3EE5AxrvMt3B-1gxHljm_uGppzlLHqf0LXrwybFzSaEfFUjSeFUeFeA-N6ZPe0oOelnVY9GJymcmgRJDjvlt2Q9AysOLCU6KuDB1J-yWi0c6Y1BFck63T2WTyF8xx5JCSrrGmwiByI_vHmUe3iIr2SFrqAhYxtVWwlbjku9eEYU0-c1KtgYxfmZRBpV7B3vm0x0HGwI815aSX8Vq7CKA63UzFyrBPOcxnXArQEh93Y3XnH4_H_Xcgl2Z0PAiAFiJ7B-GMDNV05ytCTiVv2IJpgJ5RJPlFtGCYTgADdcCAbHkf1QXqTEMXWIzbqcUllYwnjtvkR_wDlqthvLs5t92zJ0oaDiBaC6JSLIIZZ7Y7OTtdiSnfkOARA_ywDtdFdhPgCSFddDKjn5ybYfvX7deVbHgmJ6n6_Qf75qdZUzrKefmh_slaQk4goxh5VFI6-32KV2qCT26pdig6xBjB7ibxlZHWjP72c_6uE5twyoyp64eHmzGCzxjcTKmGuCphbvixvAO4PuByY9rxyjJOpM6w-yNGz2hwDh7quFYkHXo6Tsh8xwlOLWWwWQZ6fVke44nztRKOzJASRe5OOP6tpTabA6udyzek12coyWtYa6KL2qrniNVyWTaQ6dejGHM2RmR_R6lOy6vIaqitWFtX1xk5FbnOxN-HsQxPu209ObSa1DukG31Kc5AGBEKjOZ9-nnk0r7ESHCMFVdiqLxPlzCXTMOJqgUrgrKcymQCdVnrKR00vbTaBtoS-RyCGPz0vf_UWFysFqD118upcAM9ICc_UX1_xbmHX0bhFkejwB4TRF0RcqtGqn4zPPaJZCZTdj6UhXbqLfpL48IkidBCG0M0tVdWZ7mVeCtefgNsKGAuvpzi8mbP0WrSTHfcpRA9qZBCriYjlJta3AfwaU2W6hw4gHXW3ExVCZT1lC8CrX5fWXXBBuLkID33JGxPpeDc07hLz5y7QXWeBGNsKlwj4CJ3TVNPNY46rjdovKTqFWMNL4b8VJYOF2YJWFChpHI-v36h-056E0JW9CGKqcj-0ur8h6fE5E3mevI7Q2CfK-XnuoDokUtbO0zC5-Y_WOUkmTbJCd47_LKCJye5BFKxWD_jBQBbYXoG7gTShgnScAGq-lhFGnGwpyEg7rPLDAtECgwpdLPwUwXrgSlBjkZwkoQVBwoKanbtveCsOizbUpnhZ62Mynd-x1tUl7Rll0WIOaFGRsuyvyBcXUBPE0UH5EGYO44FKbNdLrUr6ExDyU49IGuvohm7gYcQ1_OTbLATksGDdEz1TDw0cIda6bTMhYbnZY0eIvdgVxtkI2BFLv_DVEEty0KoGznC_v9kyjhjaAsC5C8zEiTl9JVDVs-eZyFFNv6TUfnYqFysjCPVCwDs5rd52VUGMb6sTs6Wdu1Sbs2X6JlfnAQSrGzljNtlzlw6hCwSaJwj2ibYC9XVx6kpZlT9NGJAGKvpt4ZzvFnQwpP0jzu6IhnE8Ep2UB-d4r-JPMwDYSOj1kUDkyNGDVv82-5ARrrhzrBjDtD-ZJ5rKDuMbQaPvQrrnlXPCSLO_e26lL-ELqiIp_no01oNPmlewbHTqeXvtZ6I-FKvgey7fCG6R4ddsJdKCUxAVxN72CJ_4kf8TVscUFxdWUj0GCrXPK59JgtSrEaHuf6Bm3Ty-P2DFXSZSYE7cjMEQFTyaXeS-fsi7j_EaGQOLy6K5leR1L_JGUIAjo8TfZRerHYLjz2D_b-KVi155eP5LCiYQo8Kc9MgjXNmVACszKFLddW2_kg822LoI8UTAitXZs4pX2P2KEsL3QN2TRZMmGGDCYiu1OvUkqRstcqRPEkDaOw_qvmXB9YpfJNXHi_pIBFwa1VSQii7BZREpH9p08gB55Kva8xaS7J4r1xv6k-hu7ZINosYCuis5tVw2Tx8BKQ0_nlbjrpxO14C_LK4tCtn_e4Yaeh_y0pbN-pQ7QmI2LaPWM24MWzsJax7qvFEmRDGc82PdMJSh-ZDr1tsCUGhrYD8QUNB81WpwTh85a1MD7yBu0HuweAx09fCyI6FoVRGfCoM1_0RbIUBgW4tOcQGbssjw4BQUKczuNpNzML6Z6XeN3dM0dBsVbYSgPecS0bE1MbuAN3QVYX1985Xv1e1eHIQ3YIfbX2n7OIhLk2Hbbfr-3OOpq02BRum4djUjjA9dAqXhKEddvkfStldN4BclyP5btNMowg_PvA-Gm0L_EZuwpxdmfZFAQyz9DEY3Cm5ZWdtiKoVoEonqeD_jrpsgRH0wBM1oWQj-ZJcQG17nafWD7hqKJ052mjiMC_oIOj5yZOAy6tA3EOy4VbhtUlU57bGQxUqlhOQYDG6LS4wCrKGVwt7SPTAGNb2BfAqi1CtYuJlGCMtEF3zXioKo2eohR0dq4_84wZl2LDD7Bl3zmAnzFkBCUBLZclV_I51_sZ8KXWK7rUveTQpkdNuE8N9hpDLnpE7cjxAy4Y_aKsupe7WDZrJWWAsxmjts3zbmzGzzD8LDTkJ9By2b27ZFNBHKXIDJV8msViePgp6Ivhkmo8s82ecZZYR4YMam3U3v-mP9Y9tlsupuwyPWreScCEMoVfH94NxmwvByj0DL0XrNArmaakctO0X8_oE5KCYRE90KSv7WZovfLKhcreA5pycJB17j7u0nWFdunM6eYZQldOyRv1W10pnT6d_1FF2-HXCzW2GwJOch9_SOrA2i8Znxb2R2UfA92XpzewRkhyLgkKcDJP6wCcwM2oMdANc69plkXhzrfvsGxhq2FnSwEpuqrytvlNuqCCpgbKIU-DLAsGyZYmGjBZSNYcbVFtjKO2Qo1gF-GdsUMYUNRuxu1f24LEH9D_bJCrFd3rWHGNi6jNf98V7jVttuz4PmWxk_X1BwvVKIHQgVOhtvmbANSkOlOZInVVVovh4uL0QuVRAvwmnascZNRpKTexZdJGgOdThip5u5ZxAeTgRmmXEZxcotf0UfpT2o4Em9kArUBIz3CBW2HXiaVc1Yn61Fb_NoZjbM--EyOtTAnGNXn_qjCCPQQ1crvWOcYUsjCKzlk-PB1H9QjJrmTl1WwUaF1SG1HxImoiBGY1PVNfyrDgsQb1x8ewS0BgehcjRuXwGS2S9N-9PoQCVApR_xWJA5-pfe4IPg94G2cFrwQpflA3RvOokrLFGnc3iDVFnyVO8rlm3HdqvtV9uvoKxC5vgXMqy6bgEHknnDI9N7ciuaBmwbi5gUg2snbM8R9ASjBQQTzpT0g_34Ae-ZzfLfOcIvVCb7_Xrb7o_9xEwb-qXGF0wiBE6uINXMPTzfAZfviS-x2cD3mRg20kFHh1-RnBq66gpegc2aYQC0fl7xXJETCFZcGeBBauvOXuhunREM65B3_OD1PvR_HYjLql3CBaB622J2y_pxgjt_xNVZI_AqXocpgbXFHb_CxtVtbN9TY9fzBPtDNA_O8cTJEBX75ju4EGWupOlEfTgaW5jZpmMSemHW-zPOogOtOg5_Jmkvg25LhPOJl6UAtDLAaYrlkFrLFQmDik3kLTglnRGYaMVsaCliKAHyY_K1-aaZnrarS-jR1WL2EbL68on3Jgy_wJrbD676X6weZIMQ_8i25E2-lAsRE83JNnbMjNKbY065Fz5mf7K7zBUVMve1NVYd82D2NMtgNypgz8jU3we1J71mgwRYK53Qyx8dOUgjGLaVH8zCZHPXdJHdg9KUWrVqSM7b08qKdMMl0X3Zv8ZMTZGiuI9aHqKQ93kZ5xWlhXTCXnd5NbaaFHMRk7MFpND_rzucwJDxZukRhFi_A_xLwRMXlAM-2Sc7zw7XfM5Ji5ULVn-Z00pFHPz6_E82U-rhb7hRVuJMBUmsP5rfxiVRL1kssj2R4OVU0Whl7iEPvETATt2Ag_sU6BHW1Ul2zXuBoCRLaKEjhuv7OVpDu-RTpy5mS_rQnrDi3LE-M38WeQjCIVGZNzPBi-08hNN_pWFDZLYLSfynBlHqzjKJOuBRHUR3IlMkrNgJOktlfUTix3Zbk-boLWNsdkMmxBR564P9wMmoAcU5pIks7mtsly4jbQZkpyjFpFC3_8v82SFRtk9mTQORCVQQg5-BwrNMp3e4KJjd-1itBFXt_qoHQcPhUdDK-raIpNmf1tY1sKBkDGlUr3RSQuuOjC_Im6_mn0ZCjvR7BrpakQMNNx11MVQCz59jKRWinxwh_1TGTMh-odXnRPxKoNUENfP20CBivvDDFRc4LR18WPcUkTBQ1-p-E3m7SISubAKltpbI4jF6z8tfsAeSYKtnVpY4MyOuCO6cJRXRCCE3xW5BHTLnakWXuxvhHrxkqEfl7x2xprEklRfm09Cb1XwbLxKjANV1_OCdtrlsplLUpyGH9yw1kod6SEkQF3SZesRDiOnVWwku4HOZa672R-bCsL7yI65wjhk5prkIe-C4kqSWDp7AL89voMdphtfxa_jheH6ni95iA7jNobmmFj3bsn_fqBIyaLMiycAXW9-lBwidObCP1W1ZKpE8__3iJJ4SGrwqJ7ltZgXOWbSaAPXf7GLjIPXM9xOeCSGdmUmpKZvwu2kdYkCgti66agKRvLfbGEkGA9wG7kH-mUKUiNHkJa1OBuxDjHEAYnrbtQLlnL_KXFOarN-ut-oN1NhZBBYvGhfDsMIFmbX_2RcqyP5f3R14R_034uj1QE9P3l93QwipppIPkyLmRNbXavR2Gu6oHqo0uqCfU3ToNFTkdv6Vx2RdwUINgABPp1XcBCO3tsaQA91FWjoe1ZMf2xD85P2SykgvwZZ0IXjUV74Ss2QZgAF5eXsKjU39oWpprjeMVeRozO_aOepIQVXpoQsUKGQZnwgdkrzHHRGaolqzyXcIGA3dL63LuowjEoVrbBl9ZWlBUv9xSuIYK-IlKEE6j9PUAkJV33-uow4-FZLV5iniLIotRRyJZMhk6Rgg1qX4EiI8rIThf_A8f8-BHA0EYK3cLEyd_VDXtDRziHDWSG3AiDwXRwvZU1fXVWR16vt5m0_6Wel694rNMqCQODQ-kMvUo6-HkDbEBLfCgBSrSt09yqfzEiPvGWsSofxTHG7Tcd9jkFxS97dis04vHLg8kVIgxMG85JDFSLVa29nijRvbrbhzS1Lhi6dOJaC3FY_O-sFpU_VsKXqFmqPw4BsylhiQohARfEW9uS_h5pFk3EWPeKc4Fj9hygzcFWJI0tGXirTRnuVu2wEup3WkeKjGphlJoEW0CP4okoqXKTQZWgm6OwZXaADHn0-6WtT4M9kDw0EPLLMJRaCM=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LW1pbmktMjAyNS0wOC0wN3xvcGVuYWkifQ",
+              "format": "openai-responses-v1",
+              "id": "rs_0351783e6c84af92016ac2af833b6087d190c071351258c2d6",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1750,
+      "completion_tokens": 2211,
+      "total_tokens": 3961,
+      "cost": 0.0044851,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 1664,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0044851,
+        "upstream_inference_prompt_cost": 6.31e-05,
+        "upstream_inference_completions_cost": 0.004422
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 832,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  },
+  "cost_basis": "provider_reported_usage_cost"
+}

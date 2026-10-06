@@ -1,0 +1,11 @@
+{
+  "purpose": "Final bounded completion pass after successful endpoint checks. Only previously unexecuted cells, saved checkpoints, and explicitly archived HTTP-429 attempts may resume. Malformed model outputs, interrupted unobserved responses, and timeouts remain recorded unknown outcomes. The original model IDs and all inference settings stay fixed.",
+  "routes": {
+    "gemma-4-31b": {"provider_order": ["friendli"], "prompt_price": 0.00000014, "completion_price": 0.0000004, "reason": "The route completed all remaining unattempted cases; one supervised retry of prior upstream HTTP-429 failures on this working route."},
+    "gpt-oss-120b": {"provider_order": ["deepinfra/bf16"], "prompt_price": 0.000000037, "completion_price": 0.00000017, "reason": "The original BF16 route worked after cooldown; retry only prior HTTP-429 failures, not the unobserved timeout."},
+    "llama-3.3-70b": {"provider_order": ["groq"], "prompt_price": 0.00000059, "completion_price": 0.00000079, "reason": "Complete the saved checkpoint and remaining cases on the working route; previous malformed tool-call outcomes are not retried."},
+    "qwen3-235b-a22b-2507": {"provider_order": ["alibaba"], "prompt_price": 0.0000001495, "completion_price": 0.000000598, "reason": "Complete remaining cases on the successfully checked same-model route, without changing inference parameters."},
+    "qwen3-8b": {"provider_order": ["alibaba"], "prompt_price": 0.000000117, "completion_price": 0.000000455, "reason": "Resume unattempted cases after intermittent rate limits on the sole compatible route. Pause after three consecutive infrastructure failures."},
+    "qwen3.5-9b": {"provider_order": ["siliconflow/fp8"], "prompt_price": 0.0000001, "completion_price": 0.00000015, "reason": "Complete remaining unattempted cases on the previously successful route. Saved timeout and interrupted-response outcomes are not resampled."}
+  }
+}

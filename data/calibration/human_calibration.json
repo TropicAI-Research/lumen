@@ -1,0 +1,146 @@
+{
+  "design": "100 cases, stratified 25 per judge label (COMPLY/SAY_DO_GAP/REDIRECT/AMBIGUOUS), Portuguese only, blind annotation (model name hidden), single rater, fresh-start set (legacy 25-case set is not used in this analysis).",
+  "n_total_in_set": 100,
+  "n_annotated": 100,
+  "human_label_distribution": {
+    "REDIRECT": 34,
+    "COMPLY": 25,
+    "AMBIGUOUS": 25,
+    "SAY_DO_GAP": 16
+  },
+  "judge_label_distribution": {
+    "SAY_DO_GAP": 25,
+    "AMBIGUOUS": 25,
+    "COMPLY": 25,
+    "REDIRECT": 25
+  },
+  "o4_mini_vs_human": {
+    "kappa_4class": 0.68,
+    "kappa_4class_ci95": [
+      0.5641609950683572,
+      0.7841687738935919
+    ],
+    "kappa_4class_se": 0.05599413497821586,
+    "kappa_binary": 0.7333333333333334,
+    "kappa_binary_ci95": [
+      0.5635901721419311,
+      0.8717948717948717
+    ],
+    "kappa_binary_se": 0.08080188500343306,
+    "agreement_4class_pct": 76.0,
+    "agreement_binary_pct": 90.0
+  },
+  "per_class_pr": {
+    "COMPLY": {
+      "precision": 0.8,
+      "recall": 0.8,
+      "f1": 0.8000000000000002,
+      "tp": 20,
+      "fp": 5,
+      "fn": 5,
+      "support_judge": 25,
+      "support_human": 25
+    },
+    "SAY_DO_GAP": {
+      "precision": 0.56,
+      "recall": 0.875,
+      "f1": 0.6829268292682927,
+      "tp": 14,
+      "fp": 11,
+      "fn": 2,
+      "support_judge": 25,
+      "support_human": 16
+    },
+    "REDIRECT": {
+      "precision": 1.0,
+      "recall": 0.7352941176470589,
+      "f1": 0.8474576271186441,
+      "tp": 25,
+      "fp": 0,
+      "fn": 9,
+      "support_judge": 25,
+      "support_human": 34
+    },
+    "AMBIGUOUS": {
+      "precision": 0.68,
+      "recall": 0.68,
+      "f1": 0.68,
+      "tp": 17,
+      "fp": 8,
+      "fn": 8,
+      "support_judge": 25,
+      "support_human": 25
+    }
+  },
+  "confusion_matrix_4class": {
+    "labels": [
+      "COMPLY",
+      "SAY_DO_GAP",
+      "REDIRECT",
+      "AMBIGUOUS"
+    ],
+    "matrix_human_x_judge": [
+      [
+        20,
+        3,
+        0,
+        2
+      ],
+      [
+        2,
+        14,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        25,
+        6
+      ],
+      [
+        1,
+        7,
+        0,
+        17
+      ]
+    ]
+  },
+  "methodology": {
+    "sampling": "Stratified by primary-judge label (o4-mini-2025-04-16): 25 cases sampled from each of COMPLY, SAY_DO_GAP, REDIRECT, AMBIGUOUS. Population: PT L2-positive cases across the 32-model panel.",
+    "rater_count": 1,
+    "languages_validated": [
+      "pt"
+    ],
+    "cross_lingual_generalization": "inferred from cross-judge \u03ba over n=656 multilingual cases",
+    "blind_to_model_identity": true,
+    "bootstrap_resamples": 1000,
+    "seed": 42
+  },
+  "population_reweighting": {
+    "description": "Reweights human labels against population judge-label frequencies to estimate P(human=SAY_DO_GAP).",
+    "population_frequencies": {
+      "COMPLY": 0.8590607861060329,
+      "SAY_DO_GAP": 0.08175274223034736,
+      "REDIRECT": 0.039876599634369285,
+      "AMBIGUOUS": 0.01930987202925046
+    },
+    "population_n": 17504,
+    "conditional_human_sdg_per_judge_label": {
+      "COMPLY": 0.08,
+      "SAY_DO_GAP": 0.56,
+      "REDIRECT": 0.0,
+      "AMBIGUOUS": 0.0
+    },
+    "point_estimate": 0.11450639853747716,
+    "bootstrap": {
+      "n_resamples": 5000,
+      "seed": 42,
+      "stratum_size": 25,
+      "method": "resample 25 humans with replacement within each judge-label stratum from confusion matrix, recompute reweighted P(human=SAY_DO_GAP) using fixed population frequencies",
+      "mean": 0.11436139076782452,
+      "ci_2_5": 0.03924131627056673,
+      "ci_97_5": 0.22413391224862889
+    }
+  }
+}

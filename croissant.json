@@ -1,0 +1,1096 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "dct": "http://purl.org/dc/terms/",
+    "conformsTo": "dct:conformsTo",
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "recordSet": "cr:recordSet",
+    "field": "cr:field",
+    "source": "cr:source",
+    "fileObject": "cr:fileObject",
+    "extract": "cr:extract",
+    "column": "cr:column",
+    "citeAs": "cr:citeAs",
+    "equivalentProperty": "cr:equivalentProperty",
+    "fileProperty": "cr:fileProperty",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "samplingRate": "cr:samplingRate",
+    "separator": "cr:separator",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    }
+  },
+  "@type": "sc:Dataset",
+  "name": "Lumen-bench",
+  "description": "Multilingual simulated tool-calling safety benchmark. This descriptor covers parallel inputs, original human/model judge evidence, and fixed benign controls. Corrected-response evaluation results are versioned separately and must not be inferred from these calibration tables.",
+  "url": "https://huggingface.co/datasets/Tropic-AI/lumen-bench",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "version": "1.1.0",
+  "citeAs": "Bonás, Giovana Kerche; Laitz, Thiago; Almeida, Thales Sales; Santos, João Guilherme Alves (2026). Lumen-bench: Cross-Lingual Safety Gaps and the Say-Do Problem in Tool-Calling Large Language Models. https://github.com/TropicAI-Research/lumen",
+  "creator": {
+    "@type": "sc:Organization",
+    "name": "Tropic AI",
+    "url": "https://github.com/TropicAI-Research/lumen"
+  },
+  "conformsTo": "http://mlcommons.org/croissant/1.1",
+  "inLanguage": [
+    "pt",
+    "en",
+    "es",
+    "zh",
+    "hi"
+  ],
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "data/tables/parallel_inputs.csv",
+      "name": "parallel_inputs",
+      "description": "108 Portuguese-authored scenarios with translations and pressure variants. No native translation validation.",
+      "encodingFormat": "text/csv",
+      "contentUrl": "https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/main/data/tables/parallel_inputs.csv",
+      "sha256": "1e25b3942112bdea5a9d1b6e0bbe111dc0a2801fb56019b3819192ea4289636d"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "data/tables/crossjudge.csv",
+      "name": "crossjudge",
+      "description": "638 unique original responses with labels from three model judges; not labels for corrected-input reruns.",
+      "encodingFormat": "text/csv",
+      "contentUrl": "https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/main/data/tables/crossjudge.csv",
+      "sha256": "b6d4513c4dd7f0a48567823971501a2be9d646aae7c97e69f7595b5afd772ff8"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "data/tables/human_calibration.csv",
+      "name": "human_calibration",
+      "description": "100 Portuguese cases labelled by one author; judge-label-stratified sample.",
+      "encodingFormat": "text/csv",
+      "contentUrl": "https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/main/data/tables/human_calibration.csv",
+      "sha256": "81adbd64272662cac59428007c1db686495e44954e481a246483c93e9e1c857b"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "data/tables/historical_judge_labels.csv",
+      "name": "historical_judge_labels",
+      "description": "17504 unique original-case judgments. Redundant archive entries remain in the source JSONL; the first recorded reason is retained here.",
+      "encodingFormat": "text/csv",
+      "contentUrl": "https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/main/data/tables/historical_judge_labels.csv",
+      "sha256": "2b82f8a949d8e421b55c5da96929ab6f9b43ff33b2dccaa8f28c3962dfaed75e"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "data/tables/benign_controls.csv",
+      "name": "benign_controls",
+      "description": "3300 fixed benign observations and mechanical completion scores. This table does not claim complete corrected harmful-pair coverage.",
+      "encodingFormat": "text/csv",
+      "contentUrl": "https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/main/data/tables/benign_controls.csv",
+      "sha256": "33c08b11c1d54ec89e573a7b21c644483d22fa3a732691c136962d78dc735ffb"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "parallel_inputs",
+      "name": "parallel_inputs",
+      "description": "108 Portuguese-authored scenarios with translations and pressure variants. No native translation validation.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/category",
+          "name": "category",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "category"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/native_translation_validation",
+          "name": "native_translation_validation",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "native_translation_validation"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/pressure_variants",
+          "name": "pressure_variants",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "pressure_variants"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/scenario_id",
+          "name": "scenario_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "scenario_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/source_authoring",
+          "name": "source_authoring",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "source_authoring"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/source_language",
+          "name": "source_language",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "source_language"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/text_en",
+          "name": "text_en",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "text_en"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/text_es",
+          "name": "text_es",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "text_es"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/text_hi",
+          "name": "text_hi",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "text_hi"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/text_pt",
+          "name": "text_pt",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "text_pt"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/text_zh",
+          "name": "text_zh",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "text_zh"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "parallel_inputs/translation_model",
+          "name": "translation_model",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/parallel_inputs.csv"
+            },
+            "extract": {
+              "column": "translation_model"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "crossjudge",
+      "name": "crossjudge",
+      "description": "638 unique original responses with labels from three model judges; not labels for corrected-input reruns.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/category",
+          "name": "category",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "category"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/gemini_label",
+          "name": "gemini_label",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "gemini_label"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/lang",
+          "name": "lang",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "lang"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/model",
+          "name": "model",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/o4_mini_label",
+          "name": "o4_mini_label",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "o4_mini_label"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/opus_label",
+          "name": "opus_label",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "opus_label"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/pressure_type",
+          "name": "pressure_type",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "pressure_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/prompt",
+          "name": "prompt",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "prompt"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "crossjudge/question_id",
+          "name": "question_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/crossjudge.csv"
+            },
+            "extract": {
+              "column": "question_id"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "human_calibration",
+      "name": "human_calibration",
+      "description": "100 Portuguese cases labelled by one author; judge-label-stratified sample.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/also_matches_saved_annotation_interface_case",
+          "name": "also_matches_saved_annotation_interface_case",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "also_matches_saved_annotation_interface_case"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/assistant_response",
+          "name": "assistant_response",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "assistant_response"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/case_id",
+          "name": "case_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "case_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/category",
+          "name": "category",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "category"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/content_provenance",
+          "name": "content_provenance",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "content_provenance"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/human_label",
+          "name": "human_label",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "human_label"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/judge_label",
+          "name": "judge_label",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "judge_label"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/judge_reason",
+          "name": "judge_reason",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "judge_reason"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/language",
+          "name": "language",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "language"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/model",
+          "name": "model",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/pressure_type",
+          "name": "pressure_type",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "pressure_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/prompt_type",
+          "name": "prompt_type",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "prompt_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/protocol",
+          "name": "protocol",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "protocol"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/question_id",
+          "name": "question_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "question_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/question_text",
+          "name": "question_text",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "question_text"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "human_calibration/tool_calls",
+          "name": "tool_calls",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/human_calibration.csv"
+            },
+            "extract": {
+              "column": "tool_calls"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "historical_judge_labels",
+      "name": "historical_judge_labels",
+      "description": "17504 unique original-case judgments. Redundant archive entries remain in the source JSONL; the first recorded reason is retained here.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/category",
+          "name": "category",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "category"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/key",
+          "name": "key",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "key"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/label",
+          "name": "label",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "label"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/lang",
+          "name": "lang",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "lang"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/model",
+          "name": "model",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/pressure_type",
+          "name": "pressure_type",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "pressure_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/prompt",
+          "name": "prompt",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "prompt"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/question_id",
+          "name": "question_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "question_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "historical_judge_labels/reason",
+          "name": "reason",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/historical_judge_labels.csv"
+            },
+            "extract": {
+              "column": "reason"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "benign_controls",
+      "name": "benign_controls",
+      "description": "3300 fixed benign observations and mechanical completion scores. This table does not claim complete corrected harmful-pair coverage.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/aggregate_success",
+          "name": "aggregate_success",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "aggregate_success"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/benign_success",
+          "name": "benign_success",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "benign_success"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/bypass_flags_true",
+          "name": "bypass_flags_true",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "bypass_flags_true"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/design_version",
+          "name": "design_version",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "design_version"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/error",
+          "name": "error",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "error"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/expected_tool",
+          "name": "expected_tool",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "expected_tool"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/failed_expected_calls",
+          "name": "failed_expected_calls",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "failed_expected_calls"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/language",
+          "name": "language",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "language"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/model",
+          "name": "model",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/outcome",
+          "name": "outcome",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "outcome"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/paired_harmful_category",
+          "name": "paired_harmful_category",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "paired_harmful_category"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/paired_harmful_scenario_id",
+          "name": "paired_harmful_scenario_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "paired_harmful_scenario_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/policy_clean_success",
+          "name": "policy_clean_success",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "policy_clean_success"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/prompt_type",
+          "name": "prompt_type",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "prompt_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/question_id",
+          "name": "question_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "question_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/refusal_language",
+          "name": "refusal_language",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "refusal_language"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/result_file",
+          "name": "result_file",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "result_file"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/scenario_id",
+          "name": "scenario_id",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "scenario_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/successful_expected_call_indices",
+          "name": "successful_expected_call_indices",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "successful_expected_call_indices"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/tools_called",
+          "name": "tools_called",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "tools_called"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "benign_controls/valid_observation",
+          "name": "valid_observation",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "data/tables/benign_controls.csv"
+            },
+            "extract": {
+              "column": "valid_observation"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
