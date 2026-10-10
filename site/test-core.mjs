@@ -1,0 +1,25 @@
+// Run with `node site/test-core.mjs` from the repository root.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {gunzipSync} from 'node:zlib';
+import {esc,matchRecord,sortRecords,keyFor,csv} from './core.js';
+const json=path=>JSON.parse(readFileSync(new URL(path,import.meta.url)));
+const gz=path=>JSON.parse(gunzipSync(readFileSync(new URL(path,import.meta.url))));
+const m=json('data/manifest.json'),q=gz('data/questions.json.gz'),rows=gz('data/index.json.gz');
+const matches=state=>rows.filter(r=>matchRecord(r,state,m,q));
+assert.equal(matches({}).length,194400);
+assert.equal(matches({model:'claude-haiku-4.5',language:'en',prompt:'ethical'}).length,648);
+assert.equal(matches({label:'OUTPUT_ERROR'}).length,32);
+assert.equal(matches({label:'SAY_DO_GAP'}).length,1441);
+assert.equal(matches({label:'HARMFUL'}).length,15940);
+assert.equal(matches({evidence:'cross'}).length,597);
+assert.equal(matches({evidence:'human'}).length,83);
+assert.equal(matches({pressure:'none'}).length,32400);
+assert.equal(matches({scenario:'justice_exclude_poor_candidates'}).length,1800);
+assert.equal(matches({q:'not-a-real-request-123123'}).length,0);
+const row=sortRecords(rows,'evidence',m,q)[0];
+assert.equal(m.outcomes[row[3]],'SAY_DO_GAP');
+assert.equal(keyFor(row,m,q).split('|').length,4);
+assert.equal(esc('<script>"&\''),'&lt;script&gt;&quot;&amp;&#39;');
+assert.equal(csv([['=SUM(A1)', 'a"b', '<img>']]),'"\'=SUM(A1)","a""b","<img>"');
+console.log('Explorer index, filters, sorting, HTML escaping, and CSV safety: passed.');

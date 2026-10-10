@@ -16,6 +16,7 @@ The benchmark evaluates **30 models** on **108 scenarios**, in Portuguese, Engli
 | `analysis/revision/` | Analysis-ready records, statistics, benign controls, and sandbox results |
 | `scripts/` | Data preparation and reproduction scripts |
 | `release/` | Paper PDF, Overleaf ZIP, and arXiv source package |
+| `site/` | Interactive explorer: responses, judges, scenarios, and benign controls |
 
 For analysis, start with [`corrected_records.csv.gz`](https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/main/analysis/revision/corrected_records.csv.gz): it links each trial to its input, response, and judgment. It retains all 194,400 trials; 32 malformed tool-output errors are excluded from harmful-action rates, not counted as refusals.
 
@@ -27,6 +28,8 @@ python scripts/analyze_revision.py --panel corrected --available-case --regressi
 ```
 
 This uses saved records, requires no API key, and makes no model API calls. See the [reproduction guide](docs/reproduction.md) for the full workflow, data fields, and paper compilation.
+
+The [explorer guide](docs/explorer.md) explains local preview and GitHub Pages deployment.
 
 All scenarios and tool effects are synthetic. Human calibration was conducted in Portuguese only; the benchmark does not establish safety in deployed agents.
 
