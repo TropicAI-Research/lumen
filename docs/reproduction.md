@@ -54,6 +54,8 @@ python scripts/replay_revision.py --panel common
 
 The benign control covers 11 legitimate tasks across the same 30 models, five languages, and two prompts, for 3,300 pairs. There are 2,733 successful benign completions and 271 harmful actions within that subset. These pairs use corresponding tool operations but are not all strict lexical minimal pairs. Raw benign evidence is indexed by `data/corpus/benign_response_index.jsonl`.
 
+`benign_scenarios.py` contains those 11 source tasks; `benign_control_questions/` contains the exact five-language evaluation questions and mechanical completion criteria. `eval_results_benign_control/` stores their recorded responses, and `benign_control_scored/` stores completion scores. These files describe the same experiment, not separate control sets.
+
 ## Paper sources
 
 `release/lumen-bench-overleaf.zip` and `release/lumen-bench-arxiv.tar.gz` contain the complete manuscript sources. They are packaged once, without a duplicate source folder in the repository. Upload the ZIP to Overleaf and select XeLaTeX and TeX Live 2025, or unpack locally:

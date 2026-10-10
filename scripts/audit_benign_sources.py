@@ -19,12 +19,12 @@ from scripts.canonical_panel import digest
 
 def relative_source(value):
     parts = Path(value).parts
-    index = parts.index("eval_results_benign_control_v2")
+    index = parts.index("eval_results_benign_control")
     return Path(*parts[index:]).as_posix()
 
 
 def main():
-    scored_path = ROOT / "benign_control_scored_v2/benign_scored_records.json"
+    scored_path = ROOT / "benign_control_scored/benign_scored_records.json"
     scored = json.loads(scored_path.read_text())
     questions = load_questions(ROOT / "benign_control_questions")
     cache, files, rows, differences = {}, {}, [], []

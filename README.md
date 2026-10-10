@@ -11,12 +11,13 @@ The benchmark evaluates **30 models** on **108 scenarios**, in Portuguese, Engli
 | Location | Contents |
 |---|---|
 | `questions_v3_*.json`, `tool/`, `configs/` | Evaluation questions, tools, and model settings |
-| `eval_results_consolidated/`, `eval_results_benign_control_v2/` | Recorded model responses |
+| `eval_results_consolidated/`, `eval_results_benign_control/` | Recorded model responses |
+| `benign_control_questions/`, `benign_control_scored/` | The 11 benign tasks and completion scores for all 3,300 trials |
 | `data/` | Parallel corpus, response records, human calibration, and judge labels |
 | `analysis/revision/` | Analysis-ready records, statistics, benign controls, and sandbox results |
 | `scripts/` | Data preparation and reproduction scripts |
 | `release/` | Paper PDF, Overleaf ZIP, and arXiv source package |
-| `site/` | Interactive explorer: responses, judges, scenarios, and benign controls |
+| `site/` (GitHub) | Interactive explorer: responses, judges, scenarios, and benign controls |
 
 For analysis, start with [`corrected_records.csv.gz`](https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/main/analysis/revision/corrected_records.csv.gz): it links each trial to its input, response, and judgment. It retains all 194,400 trials; 32 malformed tool-output errors are excluded from harmful-action rates, not counted as refusals.
 

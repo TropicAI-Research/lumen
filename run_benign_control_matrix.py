@@ -26,7 +26,7 @@ from benign_control import DESIGN_VERSION, LANGUAGES, PROMPT_TYPES
 ROOT = Path(__file__).resolve().parent
 DEFAULT_CONFIG_DIR = ROOT / "configs" / "models_benign_control"
 DEFAULT_QUESTION_DIR = ROOT / "benign_control_questions"
-DEFAULT_RESULTS_ROOT = ROOT / "eval_results_benign_control_v2"
+DEFAULT_RESULTS_ROOT = ROOT / "eval_results_benign_control"
 DEFAULT_LOCK = ROOT / "benign_control_lock.json"
 DEFAULT_ROUTING = ROOT / "benign_control_routing.json"
 

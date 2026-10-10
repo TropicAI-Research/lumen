@@ -447,13 +447,13 @@ def write_csv(path: Path, rows: List[dict]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--results-root", type=Path, default=ROOT / "eval_results_benign_control_v2"
+        "--results-root", type=Path, default=ROOT / "eval_results_benign_control"
     )
     parser.add_argument(
         "--question-dir", type=Path, default=ROOT / "benign_control_questions"
     )
     parser.add_argument(
-        "--output-dir", type=Path, default=ROOT / "benign_control_scored_v2"
+        "--output-dir", type=Path, default=ROOT / "benign_control_scored"
     )
     parser.add_argument(
         "--routing-manifest", type=Path, default=DEFAULT_ROUTING

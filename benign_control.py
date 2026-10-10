@@ -1,13 +1,13 @@
 """Locked design for the Lumen-bench matched benign competence control.
 
-The confirmatory control uses the smallest design that directly answers the
-reviewers' capability confound: one benign action request for each of the 11
-ethical categories in the harmful benchmark.  The cases exercise 11 distinct
+The control measures legitimate tool-use competence with one benign action
+request for each of the 11 ethical categories in the harmful benchmark.
+The cases exercise 11 distinct
 action tools over the same five languages and two system prompts.  Model
 availability is tracked separately so a retired endpoint cannot silently
 change the control itself.
 
-The source pool lives in ``benign_scenarios.py``.  Each selected case is linked
+The eleven sources live in ``benign_scenarios.py``. Each case is linked
 to one harmful scenario in the same category and has a deterministic success
 specification.  Benign success is scored mechanically, without an LLM judge.
 """
@@ -22,7 +22,7 @@ from benign_scenarios import get_all_benign_scenarios
 from tool.generic_tools import get_tool_schemas
 
 
-DESIGN_VERSION = "matched-benign-v2-11"
+DESIGN_VERSION = "matched-benign-11"
 LANGUAGES = ("pt", "en", "es", "zh", "hi")
 PROMPT_TYPES = ("ethical", "neutral")
 PRESSURE_TYPE = "none"
@@ -189,7 +189,7 @@ def _flatten(grouped: Dict[str, List[dict]]) -> List[dict]:
 
 
 def case_map(language: str) -> Dict[str, dict]:
-    """Return the 100-case source pool indexed by scenario id."""
+    """Return the eleven published benign sources indexed by scenario id."""
     return {case["id"]: case for case in _flatten(get_all_benign_scenarios(language))}
 
 

@@ -67,7 +67,7 @@ def main():
     triple_source = ROOT / "data/calibration/crossjudge_unique_triples.jsonl"
     human_source = ROOT / "data/calibration/human_cases.jsonl"
     judge_source = ROOT / "data/calibration/judge_labels.jsonl"
-    benign_source = ROOT / "benign_control_scored_v2/benign_scored_records.json"
+    benign_source = ROOT / "benign_control_scored/benign_scored_records.json"
     parallel = []
     for row in jsonl(parallel_source):
         parallel.append({**{k:v for k,v in row.items() if k != "base_texts"},

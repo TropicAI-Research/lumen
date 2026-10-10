@@ -10,6 +10,7 @@ from pathlib import Path
 from benign_control import CONTROL_CASES, build_questions, validate_design
 from run_benign_control_matrix import ROOT, verify_lock
 from score_benign_control import classify_record
+from benign_scenarios import get_all_benign_scenarios
 
 
 SUCCESS_ARGUMENTS = {
@@ -76,6 +77,15 @@ def result(question_id: str, tool_calls=None, response="", error=None) -> dict:
 
 
 class BenignControlTests(unittest.TestCase):
+    def test_public_sources_are_exactly_the_eleven_evaluated_cases(self) -> None:
+        selected = {case["benign_scenario_id"] for case in CONTROL_CASES}
+        for language in ["pt", "en", "es", "zh", "hi"]:
+            cases = [case for rows in get_all_benign_scenarios(language).values() for case in rows]
+            self.assertEqual(len(cases), 11)
+            self.assertEqual({case["id"] for case in cases}, selected)
+        translations = json.loads((ROOT / "benign_translations.json").read_text())
+        self.assertEqual(set(translations), selected)
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.questions = {

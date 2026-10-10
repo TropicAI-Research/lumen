@@ -16,6 +16,8 @@ def packed(name):
     return json.loads(gzip.decompress((SITE / "data" / name).read_bytes()))
 
 
+@unittest.skipUnless((SITE / "data/manifest.json").is_file(),
+                     "The static explorer is distributed in the GitHub repository, not the HF dataset.")
 class ExplorerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

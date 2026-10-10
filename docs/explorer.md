@@ -16,17 +16,17 @@ From the released repository:
 
 ```bash
 pip install -r requirements.txt
-python scripts/build_explorer.py
+python scripts/build_explorer.py --dataset-revision DATASET_COMMIT
 python -m unittest test_explorer
 node site/test-core.mjs
 python -m http.server 8768 --bind 127.0.0.1 --directory site
 ```
 
-Open `http://127.0.0.1:8768`. Use a current browser with the standard `DecompressionStream` API. Opening `index.html` directly with `file://` will not work, because the browser must fetch local data files over HTTP.
+Replace `DATASET_COMMIT` with the dataset's immutable 40-character commit SHA. Open `http://127.0.0.1:8768`. Use a current browser with the standard `DecompressionStream` API. Opening `index.html` directly with `file://` will not work, because the browser must fetch local data files over HTTP.
 
 The builder is offline and deterministic. It reads the canonical response selector, validates source hashes, and produces a compressed index plus lazily loaded response shards under `site/data/`. Generated data is about 78 MB; a visit downloads only the index and the response shards it needs, not the full underlying dataset. No third-party fonts, analytics, or external JavaScript are used.
 
-Before changing the input data, publish and verify an immutable dataset revision, then update `REVISION` in `scripts/build_explorer.py` and the paper link in `site/index.html`. The public source files must match the manifest's hashes. Do not point production data links to mutable `main` or include credentials in `site/`.
+Before changing the input data, publish and verify an immutable dataset revision, then pass that commit to `--dataset-revision`. Use the same revision for the paper link in `site/index.html`. The public source files must match the manifest's hashes. Do not point production data links to mutable `main` or include credentials in `site/`.
 
 ## Publish on GitHub Pages
 

@@ -19,7 +19,7 @@ from scripts.audit_benign_sources import relative_source
 
 def load_versioned_pairs():
     """Resolve against saved responses now, never a stale aggregate report."""
-    benign = original.load_benign(ROOT / "benign_control_scored_v2/benign_scored_records.json")
+    benign = original.load_benign(ROOT / "benign_control_scored/benign_scored_records.json")
     # Portable pointers in this derived join; the frozen score file is unchanged.
     benign = [{**r, "result_file": relative_source(r["result_file"])} for r in benign]
     models = {r["model"] for r in benign}

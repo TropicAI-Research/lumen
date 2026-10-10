@@ -424,7 +424,7 @@ def main() -> None:
     parser.add_argument(
         "--benign-scored",
         type=Path,
-        default=ROOT / "benign_control_scored_v2" / "benign_scored_records.json",
+        default=ROOT / "benign_control_scored" / "benign_scored_records.json",
     )
     parser.add_argument(
         "--consolidated-root",
@@ -439,7 +439,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=ROOT / "benign_control_analysis_v2",
+        default=ROOT / "benign_control_analysis",
     )
     parser.add_argument(
         "--routing-manifest", type=Path, default=DEFAULT_ROUTING
@@ -447,7 +447,7 @@ def main() -> None:
     parser.add_argument(
         "--allow-incomplete",
         action="store_true",
-        help="Analyze pilot data. Full rebuttal results require the routed full matrix.",
+        help="Allow partial diagnostic input; published results require the complete routed matrix.",
     )
     args = parser.parse_args()
 
@@ -516,7 +516,7 @@ def main() -> None:
         encoding="utf-8",
     )
     markdown = render_markdown(report)
-    (args.output_dir / "rebuttal_numbers.md").write_text(
+    (args.output_dir / "summary.md").write_text(
         markdown, encoding="utf-8"
     )
     print(markdown)

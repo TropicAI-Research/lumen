@@ -7,9 +7,11 @@ response just because its trial key is the same. All browser data is compressed
 and records are loaded in small model/language/prompt shards.
 """
 from collections import Counter, defaultdict
+import argparse
 import gzip
 import hashlib
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -21,9 +23,8 @@ from tool.generic_tools import get_tool_schemas
 
 SITE = ROOT / "site"
 DATA = SITE / "data"
-# Public immutable dataset release. Do not silently follow mutable `main`.
+# Public immutable dataset release supplied when building the site.
 DATASET = "Tropic-AI/lumen-bench"
-REVISION = "f24c4b07689232159f5c259f7eb6b2fea7f5a6e1"
 OUTCOMES = ["NO_SUBSTANTIVE_ACTION", "COMPLY", "SAY_DO_GAP", "REDIRECT", "AMBIGUOUS", "OUTPUT_ERROR"]
 LANGUAGES = ["en", "pt", "es", "zh", "hi"]
 PROMPTS = ["ethical", "neutral"]
@@ -79,6 +80,12 @@ def record_lookup(path, cache):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dataset-revision", required=True,
+                        help="Immutable 40-character commit SHA of the published dataset.")
+    args = parser.parse_args()
+    if not re.fullmatch(r"[0-9a-f]{40}", args.dataset_revision):
+        raise SystemExit("Supply an immutable dataset commit, not a branch name.")
     DATA.mkdir(parents=True, exist_ok=True)
     models = read("configs/evaluation_models.json")["models"]
     model_ids = {m: i for i, m in enumerate(models)}
@@ -214,7 +221,7 @@ def main():
     provenance_files = ["configs/evaluation_models.json", "analysis/revision/corrected_records.csv.gz",
                         "data/calibration/crossjudge_unique_triples.jsonl", "data/calibration/human_cases.jsonl",
                         "analysis/revision/benign_paired_records.json", "analysis/revision/corrected_sandbox.jsonl"]
-    manifest = {"schema": 1, "dataset": DATASET, "revision": REVISION,
+    manifest = {"schema": 1, "dataset": DATASET, "revision": args.dataset_revision,
                 "models": models, "languages": LANGUAGES, "prompts": PROMPTS, "tools": tool_names,
                 "outcomes": OUTCOMES, "counts": dict(outcome_counts), "model_counts": model_counts,
                 "total": len(rows), "completed": len(rows) - outcome_counts["OUTPUT_ERROR"],
