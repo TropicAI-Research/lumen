@@ -12,9 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.canonical_panel import load_panel, audit
 from scripts.analyze_revision import paired, select_available_cases
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 
 
 def main():
+    ensure_manuscript()
     source_frame = load_panel("corrected")
     frame = select_available_cases(source_frame)
     if not bool(frame.valid.all() and frame.input_matches_current.all() and frame.l1.notna().all()):
@@ -39,7 +41,7 @@ def main():
         lines.append(f"{r['prompt'].capitalize()} & {r['language'].upper()} & {r['mean_difference_pp']:.2f} & " +
                      f"{r['wins']} / {r['losses']} / {r['ties']} & {r['p_raw']:.4f} & {r['p_holm']:.4f} " + r"\\")
     lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
-    (ROOT / "Lumen_bench_original_corrigido/generated/mechanical_language.tex").write_text("\n".join(lines) + "\n")
+    (PAPER / "generated/mechanical_language.tex").write_text("\n".join(lines) + "\n")
     print(json.dumps([{k:v for k,v in row.items() if k != "model_rates"} for row in comparisons], indent=2))
 
 

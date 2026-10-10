@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.canonical_panel import iter_cases, compact, release_models
 from scripts.build_paper_results import table, number, pvalue
 from scripts.build_supplement import tex
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 
 
 def coverage_status(status):
@@ -32,6 +33,7 @@ def serialize_coverage(report):
 
 
 def main():
+    ensure_manuscript()
     full, localized = defaultdict(Counter), defaultdict(Counter)
     cells = []
     for case in iter_cases("corrected"):
@@ -71,7 +73,7 @@ def main():
              f"This subset contains {number(common['audit']['n_cells'])} observations. It checks sensitivity to input-version coverage; "
              "it does not isolate provider or time effects or validate translation equivalence.\n\n")
     text += table("Language sensitivity on the shared 102-scenario subset. Four language comparisons form one Holm family within each prompt.", "tab:extended-language", ["Prompt", "Language", r"Mean $\Delta$ (pp)", "$p$ raw", "$p$ Holm"], [[r["prompt"],r["language"].upper(),f"{r['mean_difference_pp']:+.2f}",pvalue(r["p_raw"]),pvalue(r["p_holm"])] for r in common["comparisons"]["harmful"]])
-    (ROOT / "Lumen_bench_original_corrigido/generated/evaluation_coverage.tex").write_text("% Generated offline from the complete design.\n"+text)
+    (PAPER / "generated/evaluation_coverage.tex").write_text("% Generated offline from the complete design.\n"+text)
     print(json.dumps(totals))
 
 

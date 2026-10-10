@@ -3,20 +3,26 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import tempfile
 import unittest
 
 from scripts.build_arxiv_release import collect_sources, ROOT
-
-PAPER = ROOT / "Lumen_bench_original_corrigido"
+from scripts.unpack_manuscript import unpack
 
 
 class OriginalStyleManuscriptTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory(prefix="lumen-paper-test-")
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.paper = unpack(Path(cls.temporary.name))
+
     def setUp(self):
-        self.main = (PAPER / "neurips_2026.tex").read_text()
-        self.sources = collect_sources(PAPER)
+        self.main = (self.paper / "neurips_2026.tex").read_text()
+        self.sources = collect_sources(self.paper)
         self.active = "\n".join(
             line for p in self.sources if p.suffix == ".tex"
-            for line in (PAPER / p).read_text().splitlines()
+            for line in (self.paper / p).read_text().splitlines()
             if not line.lstrip().startswith("%"))
 
     def test_original_main_sections_and_result_tables_remain(self):
@@ -38,7 +44,7 @@ class OriginalStyleManuscriptTests(unittest.TestCase):
             self.assertIn(Path(name), self.sources)
         examples = json.loads((ROOT / "data/corpus/manuscript_examples.json").read_text())["figure"]
         hindi = next(r for r in examples if r["language"] == "hi")
-        rendered = (PAPER / "generated/original_examples.tex").read_text()
+        rendered = (self.paper / "generated/original_examples.tex").read_text()
         self.assertIn(hindi["assistant_response"], rendered)
         self.assertIn("configure\\_system", rendered)
         self.assertNotIn(Path("figure/examples.pdf"), self.sources)
@@ -81,9 +87,9 @@ class OriginalStyleManuscriptTests(unittest.TestCase):
         self.assertFalse(set(references)-set(labels))
 
     def test_regenerated_figures_use_the_current_cohorts(self):
-        agreement = subprocess.run(["pdftotext", str(PAPER / "figure/fig8_3judge_agreement.pdf"), "-"],
+        agreement = subprocess.run(["pdftotext", str(self.paper / "figure/fig8_3judge_agreement.pdf"), "-"],
                                    check=True, text=True, capture_output=True).stdout
-        sandbox = subprocess.run(["pdftotext", str(PAPER / "figure/fig9_sandbox_consequences.pdf"), "-"],
+        sandbox = subprocess.run(["pdftotext", str(self.paper / "figure/fig9_sandbox_consequences.pdf"), "-"],
                                  check=True, text=True, capture_output=True).stdout
         calibration = json.loads((ROOT / "analysis/verification/measurement_cohort_audit.json").read_text())
         replay = json.loads((ROOT / "analysis/revision/corrected_sandbox_summary.json").read_text())

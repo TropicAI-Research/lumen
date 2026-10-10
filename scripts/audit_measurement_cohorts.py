@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.canonical_panel import DEFECT_IDS
 from scripts.reproduce_sensitivity import LABELS, HARMFUL, judge_uncertainty, kappa
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 
 JUDGES = ["o4_mini_label", "opus_label", "gemini_label"]
 
@@ -50,6 +51,7 @@ def summarize_triples(rows):
 
 
 def main():
+    ensure_manuscript()
     paths = [ROOT / "data/calibration/crossjudge_triples.jsonl",
              ROOT / "data/calibration/human_calibration.json", ROOT / "web-data/judge_index.json"]
     rows = [json.loads(line) for line in paths[0].read_text().splitlines() if line]
@@ -108,7 +110,7 @@ def main():
             cells.append(f"{count}/{cohort['n']} ({100*count/cohort['n']:.2f}\\%)")
         lines.append(name + " & " + " & ".join(cells) + r" \\")
     lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
-    generated = ROOT / "Lumen_bench_original_corrigido/generated"
+    generated = PAPER / "generated"
     generated.mkdir(parents=True, exist_ok=True)
     (generated / "judge_cohorts.tex").write_text("\n".join(lines) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k not in ["source_files", "original_wrong_language_keys",

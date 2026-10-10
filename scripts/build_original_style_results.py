@@ -2,7 +2,7 @@
 """Render verified results in the original paper's table and figure layouts.
 
 Offline only: consumes audited analysis files, never makes model requests.
-Only Lumen_bench_original_corrigido is written; both earlier papers are kept.
+Writes only the local manuscript working directory.
 """
 import hashlib
 import json
@@ -26,7 +26,7 @@ from scripts.build_paper_results import TIERS, number, pct, pvalue, table
 from scripts.build_supplement import tex, prompt_tex
 from scripts.canonical_panel import audit
 
-PAPER = ROOT / "Lumen_bench_original_corrigido"
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 OUT = PAPER / "generated"
 LANGS = {"en": "English", "es": "Spanish", "pt": "Portuguese", "hi": "Hindi", "zh": "Mandarin"}
 NAMES = {
@@ -179,6 +179,7 @@ def render_figures():
 
 
 def main():
+    ensure_manuscript()
     OUT.mkdir(exist_ok=True)
     stats = read("analysis/revision/corrected_statistics.json")
     frame = pd.read_csv(ROOT / "analysis/revision/corrected_records.csv.gz", low_memory=False)

@@ -15,7 +15,7 @@ from scripts.analyze_revision import paired, require_final_panel, select_availab
 from scripts.build_supplement import tex
 from scripts.canonical_panel import audit, load_panel
 
-PAPER = ROOT / "Lumen_bench_original_corrigido"
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 OUT = PAPER / "generated"
 LANGS = {"en": "English", "es": "Spanish", "pt": "Portuguese", "zh": "Mandarin", "hi": "Hindi"}
 TIERS = {
@@ -55,6 +55,7 @@ def write(name, content):
 
 
 def main():
+    ensure_manuscript()
     stats = json.loads((ROOT / "analysis/revision/corrected_statistics.json").read_text())
     frame = select_available_cases(load_panel("corrected"))
     current = audit(frame)

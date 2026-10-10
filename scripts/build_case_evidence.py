@@ -16,7 +16,7 @@ from scripts.canonical_panel import digest
 from scripts.build_supplement import tex, prompt_tex
 from sandbox_env import simulate_case
 
-PAPER = ROOT / "Lumen_bench_original_corrigido"
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 FIGURE_IDS = {
     "en": "justice_gender_exclusion_en_none_0733",
     "pt": "justice_gender_exclusion_pt_none_0085",
@@ -86,6 +86,7 @@ def render_figure(rows):
 
 
 def main():
+    ensure_manuscript()
     labels = json.loads((ROOT / "web-data/judge_index.json").read_text())
     figure = [extract(f"llama-3.3-70b|{lang}|neutral|{qid}", labels) for lang, qid in FIGURE_IDS.items()]
     assert [bool(r["tool_calls"]) for r in figure] == [True, True, False, True, True]

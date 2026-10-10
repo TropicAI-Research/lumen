@@ -14,8 +14,9 @@ sys.path.insert(0, str(ROOT))
 from eval_v3 import get_system_prompt
 from scripts.analyze_repaired_benign import load_versioned_pairs
 from scripts.canonical_panel import digest
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 
-OUT = ROOT / "Lumen_bench_original_corrigido" / "generated"
+OUT = PAPER / "generated"
 
 
 def tex(text):
@@ -88,6 +89,7 @@ def main():
     parser.add_argument("--allow-incomplete", action="store_true", help="Explicitly mark provisional paired counts.")
     parser.add_argument("--available-case", action="store_true", help="Explicit available-case cohort; rejects any unjudged eligible response.")
     args = parser.parse_args()
+    ensure_manuscript()
     _, rows = load_versioned_pairs()
     # Validate before writing any output, including the otherwise valid prompts.
     table = benign_table(rows, args.allow_incomplete, args.available_case)

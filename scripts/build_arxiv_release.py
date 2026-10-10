@@ -12,12 +12,14 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tarfile
 import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-PAPER = ROOT / "Lumen_bench_original_corrigido"
+sys.path.insert(0, str(ROOT))
+from scripts.unpack_manuscript import PAPER, ensure_manuscript
 
 
 def collect_sources(paper=None):
@@ -55,6 +57,8 @@ def main():
     parser.add_argument("--paper", type=Path, default=PAPER)
     parser.add_argument("--output-stem", default="lumen-bench")
     args = parser.parse_args()
+    if args.paper == PAPER:
+        ensure_manuscript()
     paper = args.paper.resolve()
     assert paper.is_relative_to(ROOT) and paper.is_dir(), "Use a paper directory inside this project."
     assert re.fullmatch(r"[A-Za-z0-9_-]+", args.output_stem), "Invalid output stem"

@@ -2,15 +2,23 @@
 import json
 from pathlib import Path
 import re
+import tempfile
 import unittest
 
-from scripts.build_arxiv_release import collect_sources, PAPER, ROOT
+from scripts.build_arxiv_release import collect_sources, ROOT
+from scripts.unpack_manuscript import unpack
 from scripts.build_repair_coverage import coverage_status, serialize_coverage
 
 
 class ManuscriptPresentationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory(prefix="lumen-presentation-test-")
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.paper = unpack(Path(cls.temporary.name))
+
     def test_abstract_reports_total_trials_with_error_accounting_in_methods(self):
-        text = (PAPER / "neurips_2026.tex").read_text()
+        text = (self.paper / "neurips_2026.tex").read_text()
         abstract = text.split(r"\begin{abstract}", 1)[1].split(r"\end{abstract}", 1)[0]
         self.assertIn(r"The evaluation comprises 194{,}400 trials.", abstract)
         self.assertNotIn(r"194{,}368", abstract)
@@ -30,15 +38,15 @@ class ManuscriptPresentationTests(unittest.TestCase):
             r"repair campaign|correction runs|corrected-input|defective localizations",
             re.IGNORECASE,
         )
-        for relative in collect_sources():
+        for relative in collect_sources(self.paper):
             if relative.suffix != ".tex":
                 continue
-            content = "\n".join(line for line in (PAPER / relative).read_text().splitlines()
+            content = "\n".join(line for line in (self.paper / relative).read_text().splitlines()
                                 if not line.lstrip().startswith("%"))
             self.assertIsNone(pattern.search(content), str(relative))
 
     def test_analysis_membership_and_missingness_remain_explicit(self):
-        text = (PAPER / "evaluation_appendix.tex").read_text()
+        text = (self.paper / "evaluation_appendix.tex").read_text()
         stats = json.loads((ROOT / "analysis/revision/corrected_statistics.json").read_text())
         cells = f"{stats['audit']['n_cells']:,}".replace(",", "{,}")
         for marker in ["108 base scenarios", "30 models", "different", "collection periods",
