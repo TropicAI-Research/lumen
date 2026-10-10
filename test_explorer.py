@@ -75,6 +75,19 @@ class ExplorerTests(unittest.TestCase):
                 actual.add(key)
         self.assertEqual(keys,actual)
 
+    def test_result_views_use_the_published_analyses(self):
+        benign=packed("benign.json.gz")
+        self.assertEqual(benign["statistics"],json.loads((ROOT / "analysis/revision/benign_statistics.json").read_text()))
+        self.assertEqual(packed("statistics.json.gz"),json.loads((ROOT / "analysis/revision/corrected_statistics.json").read_text()))
+        self.assertEqual(len(benign["statistics"]["by_model"]),30)
+        self.assertEqual(len(benign["statistics"]["by_language_prompt"]),10)
+        for row in benign["statistics"]["by_model"]:
+            matches=[r for r in benign["rows"] if r["model"]==row["model"]]
+            self.assertEqual(row["all_benign_trials"],len(matches))
+            self.assertEqual(row["all_benign_completed"],sum(r["benign_success"] for r in matches))
+        self.assertIn('href="#results" data-view="results"',(SITE / "index.html").read_text())
+        self.assertIn('href="#results?section=benign"',(SITE / "app.js").read_text())
+
     def test_every_exported_response_hash_and_label_matches_analysis(self):
         with gzip.open(ROOT / "analysis/revision/corrected_records.csv.gz", "rt") as stream:
             source = {r["key"]:r for r in csv.DictReader(stream)}

@@ -4,6 +4,10 @@ A static, read-only interface for the benchmark, using TropicAI's organization a
 
 ## What you can inspect
 
+The default **Results** view presents the paper's findings before the individual records. It includes harmful-action rates under both prompts for all 30 models, the say-do share with its substantive-call denominator, descriptive pressure-condition results, and the eight within-model language comparisons. The **Benign-control results** section reproduces Table 26 for all 30 models, with completion counts, harmful actions before and after conditioning on benign completion, the published model-cluster confidence interval, the four paired outcomes, and summaries by language and prompt. These are the released results, not new model evaluations. Tables export as CSV; model names and paired-outcome counts open the underlying records.
+
+Direct links: [results](https://tropicai-research.github.io/lumen/#results), [benign-control results](https://tropicai-research.github.io/lumen/#results?section=benign), and [paired language comparisons](https://tropicai-research.github.io/lumen/#results?section=languages).
+
 The response browser covers all 194,400 trials, including the 32 recorded output errors. Filters select model, language, system prompt, scenario category, pressure condition, outcome, tool, and additional evidence. Open a record to inspect the request, final assistant text, tool arguments, judge rationale, sandbox replay when available, and the recorded message trace. Every record links to its source at an immutable dataset revision and displays its SHA-256.
 
 Separate views expose the parallel scenario corpus, the 607-response three-judge sample, the 83 Portuguese human annotations, and the 3,300 benign controls with their mechanical completion criteria and harmful counterparts. Ten three-judge cases use a different response version from the analysis panel; the browser preserves their original evidence and never transfers those labels to the current response.

@@ -1,11 +1,11 @@
-import {LABELS, LANGUAGES, PRESSURES, CATEGORIES, esc as E, title, modelName, keyFor, matchRecord, sortRecords, csv} from './core.js';
+import {LABELS, LANGUAGES, PRESSURES, CATEGORIES, esc as E, title, modelName, keyFor, matchRecord, sortRecords, csv, summarizeResults, benignResultCounts} from './core.js';
 
 const app=document.querySelector('#app'), dialog=document.querySelector('#record-dialog');
 const fmt=new Intl.NumberFormat('en-US'), number=n=>fmt.format(n), percent=(n,d)=>d ? (100*n/d).toFixed(2)+'%' : 'Not available';
 const cache=new Map();
 let manifest, questions, index, renderVersion=0, filtered=[], exportRows=[], dialogReturnFocus=null, dialogReturnKey=null;
-let state={}, view='responses', toastTimer;
-const views=new Set(['responses','scenarios','judges','benign','about']);
+let state={}, view='results', toastTimer, resultsSummary;
+const views=new Set(['results','responses','scenarios','judges','benign','about']);
 const loading='<div class="loading"><span class="spinner"></span> Loading records…</div>';
 const empty=(text='Try another search or clear the filters.')=>`<div class="empty"><h3>No matching records</h3><p>${E(text)}</p><button class="button section-spacer" data-action="reset">Clear filters</button></div>`;
 
@@ -25,7 +25,7 @@ async function data(path) {
 }
 function readRoute() {
   const [name,search='']=location.hash.slice(1).split('?');
-  view=views.has(name)?name:'responses'; state=Object.fromEntries(new URLSearchParams(search));
+  view=views.has(name)?name:'results'; state=Object.fromEntries(new URLSearchParams(search));
 }
 function routeUrl(name,values={}) {
   const params=new URLSearchParams(Object.entries(values).filter(([,v])=>v!==''&&v!==null&&v!==undefined));
@@ -61,6 +61,71 @@ function filtersFooter(note) { return `<div class="filter-footer"><p>${note}</p>
 function resultBar(count,withSort=false) { return `<div class="result-bar"><span role="status"><b>${number(count)}</b> ${count===1?'record':'records'}${Object.keys(state).some(k=>!['page','n','sort','sample','record'].includes(k))?' match your filters':' available'}</span><div>${withSort?`<label for="sort">Sort: </label><select id="sort" data-filter="sort">${[['evidence','Say–do gap first'],['model','Model name'],['scenario','Scenario name']].map(([v,t])=>`<option value="${v}" ${(state.sort||'evidence')===v?'selected':''}>${t}</option>`).join('')}</select>`:''}<label class="sr-only" for="rows-per-page">Rows per page</label><select id="rows-per-page" data-filter="n"><option value="20">20 per page</option><option value="50" ${state.n==='50'?'selected':''}>50 per page</option></select></div></div>`; }
 function recordButton(key,content,classes='row-title') { return `<button class="${classes}" data-action="record" data-key="${E(key)}">${content}</button>`; }
 function table(headers,rows) { return `<p class="table-hint">Swipe the table to see all columns <span aria-hidden="true">↔</span></p><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable data table"><table><thead><tr>${headers.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`; }
+
+function rateCell(n,d) { return `<strong class="result-rate">${percent(n,d)}</strong><span class="row-subtitle">${number(n)} / ${number(d)}</span>`; }
+function resultCard(label,value,description) { return `<div class="mini-stat"><span>${E(label)}</span><strong>${E(value)}</strong><small>${E(description)}</small></div>`; }
+function interval(values) { return values.map(v=>(100*v).toFixed(2)+'%').join('–'); }
+const resultSections={main:'Harmful-action results',benign:'Benign-control results',languages:'Language comparisons'};
+
+async function resultsView() {
+  const [stats,benign]=await Promise.all([data('statistics.json.gz'),data('benign.json.gz')]);
+  resultsSummary ??= summarizeResults(index,manifest,questions);
+  const summary=resultsSummary, b=benign.statistics, section=Object.hasOwn(resultSections,state.section)?state.section:'main';
+  let content;
+  if(section==='benign') content=benignResults(b);
+  else if(section==='languages') content=languageResults(stats);
+  else content=harmfulResults(summary);
+  return sectionHeading('The results, with the evidence behind them.','Read the paper’s findings, compare all 30 models, and open the trials behind each result.')+
+    `<div class="mini-stats results-headlines">${resultCard('Harmful action · ethical prompt',percent(summary.prompts.ethical.harmful,summary.prompts.ethical.completed),'Harmful actions / completed responses')}${resultCard('Harmful action · neutral prompt',percent(summary.prompts.neutral.harmful,summary.prompts.neutral.completed),'The same benchmark without the ethical block')}${resultCard('Say–do gap',percent(summary.total.sdg,summary.total.substantive),'Verbal objection with a harmful call / substantive-call cases')}${resultCard('Benign task completion',percent(b.all_benign_completed,b.all_benign_trials),'Legitimate tasks completed / benign-control trials')}</div>`+
+    `<div class="results-tabs" aria-label="Result tables">${entries(resultSections).map(([key,label])=>`<a class="button ${section===key?'selected':''}" href="${routeUrl('results',key==='main'?{}:{section:key})}" ${section===key?'aria-current="page"':''}>${label}</a>`).join('')}</div>`+
+    `<div class="results-body" data-results-section="${section}">${content}</div>`+
+    `<div class="notice"><strong>Read safety and capability together.</strong> Low harmful-action rates alone do not establish that a model can complete legitimate tasks. These are recorded single-session evaluations with synthetic tools, not a certification of deployed-agent safety. The say–do frequency is judge-estimated; inspect <a href="#judges">alternative judges and human calibration</a> for its measurement uncertainty.</div>`;
+}
+
+function harmfulResults(summary) {
+  const rows=manifest.models.map(model=>({model,...summary.models[model]}));
+  exportRows=[['model','ethical_completed','ethical_harmful','neutral_completed','neutral_harmful','substantive_calls','say_do_gap','output_errors'],...rows.map(r=>[r.model,r.prompts.ethical.completed,r.prompts.ethical.harmful,r.prompts.neutral.completed,r.prompts.neutral.harmful,r.total.substantive,r.total.sdg,r.total.errors])];
+  const cells=r=>`<td>${rateCell(r.prompts.ethical.harmful,r.prompts.ethical.completed)}</td><td>${rateCell(r.prompts.neutral.harmful,r.prompts.neutral.completed)}</td><td>${rateCell(r.total.sdg,r.total.substantive)}</td>`;
+  return sectionHeading('Harmful actions by model','The same 108 scenarios, five languages, and six pressure conditions under each system prompt.',rows.length,true)+
+    `<p class="results-explanation">A harmful action is a tool call judged to carry out the harmful request, whether or not the model objects in words. The first two columns divide harmful actions by completed responses. The last column divides say–do cases by substantive tool-call cases, combining both prompts. Each percentage includes its numerator and denominator.</p>`+
+    table(['Model · open responses','Harmful action<br>Ethical prompt','Harmful action<br>Neutral prompt','Say–do gap<br>Both prompts'],[...rows.map(r=>`<tr><th scope="row"><a href="${routeUrl('responses',{model:r.model})}">${E(modelName(r.model))}</a></th>${cells(r)}</tr>`),`<tr class="results-total"><th scope="row">All models · pooled</th>${cells(summary)}</tr>`])+
+    `<p class="results-explanation">The ${number(summary.total.errors)} output errors remain available in the response browser but are excluded from harmful-action denominators. “Not available” means the model had no substantive calls; it does not mean a measured say–do rate of zero. Model names open the underlying responses; use <a href="#results?section=benign">benign-control results</a> to assess legitimate task completion.</p>`+
+    `<details class="record-details"><summary>Results by social-pressure condition</summary><p class="results-explanation">Descriptive rates pooled across models and languages. These describe the selected conditions; they do not establish why a pressure mechanism affects a model.</p>${table(['Pressure condition','Harmful action · ethical','Harmful action · neutral'],manifest.pressure.map(p=>`<tr><th scope="row"><a href="${routeUrl('responses',{pressure:p})}">${E(PRESSURES[p])}</a></th><td>${rateCell(summary.pressure[p].ethical.harmful,summary.pressure[p].ethical.completed)}</td><td>${rateCell(summary.pressure[p].neutral.harmful,summary.pressure[p].neutral.completed)}</td></tr>`))}</details>`+
+    `<div class="data-links">${external(source('release/lumen-bench.pdf')+'#page=4','Read the results in the paper','button')}${external(source('analysis/revision/corrected_records.csv.gz'),'Download the source trial index','button')}</div>`;
+}
+
+function benignResults(statistics) {
+  const overall=statistics.overall_paired,c=benignResultCounts({...overall,all_benign_trials:statistics.all_benign_trials,all_benign_completed:statistics.all_benign_completed}),pairs=overall.pair_outcomes;
+  const rows=statistics.by_model.map(r=>({model:r.model,...benignResultCounts(r)}));
+  exportRows=[['model','benign_completed','benign_trials','harmful_actions','available_pairs','harmful_after_benign_completion','pairs_with_benign_completion'],...rows.map(r=>[r.model,r.completed,r.trials,r.harmful,r.available,r.conditionalHarmful,r.capable])];
+  const cells=r=>`<td>${rateCell(r.completed,r.trials)}</td><td>${rateCell(r.harmful,r.available)}</td><td>${rateCell(r.conditionalHarmful,r.capable)}</td>`;
+  const resultLink=(pair,count)=>`<a href="${routeUrl('benign',{pair})}">${number(count||0)} pairs ↗</a>`;
+  const sensitivity=statistics.excluding_scorer_development_models,s=benignResultCounts(sensitivity);
+  return sectionHeading('Benign controls: capability alongside safety','11 paired tasks × 30 models × 5 languages × 2 prompts. Paper: Appendix Q, Table 26.',rows.length,true)+
+    `<p class="results-explanation">The control asks whether a model can complete a legitimate version of the same type of operation. For example, can it pay an authorized invoice when the harmful counterpart requests a bribe? We then examine harmful actions among the pairs where the benign task was completed.</p>`+
+    `<div class="mini-stats">${resultCard('Benign requests completed',percent(c.completed,c.trials),number(c.completed)+' / '+number(c.trials)+' requests')}${resultCard('Harm before the competence filter',percent(c.harmful,c.available),number(c.harmful)+' / '+number(c.available)+' harmful counterparts')}${resultCard('Harm after benign completion',percent(c.conditionalHarmful,c.capable),number(c.conditionalHarmful)+' / '+number(c.capable)+' completed-benign pairs')}</div>`+
+    `<p class="results-explanation">Models complete <strong>${number(c.completed)} of ${number(c.trials)}</strong> benign requests. In those ${number(c.capable)} pairs, they perform the harmful counterpart in <strong>${number(c.conditionalHarmful)} cases (${percent(c.conditionalHarmful,c.capable)})</strong>. Harmful action therefore remains present even when legitimate tool use is demonstrated. Its model-cluster 95% confidence interval is <strong>${interval(overall.conditional_hvr_cluster95)}</strong>; the bootstrap resamples models with all their trials kept together.</p>`+
+    `<div class="results-pairs">${table(['Benign request','No harmful action on the counterpart','Harmful action on the counterpart'],[
+      `<tr><th scope="row">Completed</th><td>${resultLink('safe_and_capable',pairs.safe_and_capable)}<span class="row-subtitle">Safe and capable on these pairs</span></td><td>${resultLink('unsafe_and_capable',pairs.unsafe_and_capable)}<span class="row-subtitle">Harm despite demonstrated competence</span></td></tr>`,
+      `<tr><th scope="row">Not completed</th><td>${resultLink('safe_but_capability_unresolved',pairs.safe_but_capability_unresolved)}<span class="row-subtitle">Competence remains unresolved</span></td><td>${resultLink('unsafe_despite_benign_failure',pairs.unsafe_despite_benign_failure)}<span class="row-subtitle">Harm with no benign completion</span></td></tr>`])}</div>`+
+    `<p class="results-explanation"><strong>How to read the model table.</strong> “Benign completed” measures legitimate task completion. “Harmful counterpart” uses all available paired harmful requests. The final column retains only pairs with benign completion. These controls cover 11 task pairs, not all 108 benchmark scenarios; they are not all strict lexical minimal pairs.</p>`+
+    table(['Model · open benign trials','Benign completed','Harmful counterpart<br>Before filtering','Harmful counterpart<br>After benign completion'],[...rows.map(r=>`<tr><th scope="row"><a href="${routeUrl('benign',{model:r.model})}">${E(modelName(r.model))}</a></th>${cells(r)}</tr>`),`<tr class="results-total"><th scope="row">All models · pooled</th>${cells(c)}</tr>`])+
+    `<div class="notice"><strong>The two measurements answer different questions.</strong> Gemini 3.1 Pro completes 110/110 benign requests with no paired harmful actions. Claude Haiku 4.5 also has no paired harmful actions, but completes only 61/110 benign requests. For its other 49 pairs, no harmful action alone does not establish safe and capable behavior. Per-model rates describe these 110 trials, not a general capability estimate.</div>`+
+    `<details class="record-details"><summary>Results by language and system prompt</summary><p class="results-explanation">Each row contains 330 benign trials across 30 models. These are descriptive summaries of the 11-pair control, not the paper’s full-panel paired language tests.</p>${table(['System prompt','Language','Benign completed','Harmful counterpart<br>Before filtering','Harmful counterpart<br>After benign completion'],statistics.by_language_prompt.map(r=>`<tr><th scope="row">${E(title(r.prompt_type))}</th><td><a href="${routeUrl('benign',{language:r.language,prompt:r.prompt_type})}">${E(LANGUAGES[r.language])}</a></td>${cells(benignResultCounts(r))}</tr>`))}</details>`+
+    `<details class="record-details"><summary>Sensitivity check: excluding scorer-development models</summary><p class="results-explanation">Earlier outputs from five models informed the completion scorer: Claude Haiku 4.5, DeepSeek V3.2, GPT-OSS 20B, Sabiá 4, and Sabiazinho 4. Excluding these models leaves ${number(s.trials)} pairs and ${percent(s.completed,s.trials)} benign completion. Harmful action remains ${percent(s.conditionalHarmful,s.capable)} among ${number(s.capable)} pairs with benign completion (model-cluster 95% CI ${interval(sensitivity.conditional_hvr_cluster95)}). This is the sensitivity analysis already reported in Appendix Q.</p></details>`+
+    `<div class="data-links"><a class="button" href="#benign">Inspect individual benign trials ↗</a>${external(source('release/lumen-bench.pdf')+'#page=31','Table 26 in the paper','button')}${external(source('analysis/revision/benign_statistics.json'),'Download the result statistics','button')}${external(source('analysis/revision/benign_paired_records.json'),'Download all paired records','button')}</div>`;
+}
+
+function languageResults(statistics) {
+  const rows=statistics.comparisons.harmful;
+  exportRows=[['system_prompt','language_vs_english','models','mean_difference_percentage_points','p_raw','p_holm'],...rows.map(r=>[r.prompt,r.language,r.n_models,r.mean_difference_pp,r.p_raw,r.p_holm])];
+  return sectionHeading('Language differences within the same model','The eight full-panel comparisons reported in Table 2, using the released analysis.',rows.length,true)+
+    `<p class="results-explanation">For each model, the analysis compares the same requests in English and the target language, under the same system prompt. The table then reports the mean difference across models. A positive difference means more harmful actions in the target language. These are not pooled rates comparing different model mixtures.</p>`+
+    table(['System prompt','Language vs. English','Mean difference<br>Percentage points','Holm-adjusted p','Below 0.05'],rows.map(r=>`<tr><th scope="row">${E(title(r.prompt))}</th><td>${E(LANGUAGES[r.language])}</td><td>${r.mean_difference_pp>=0?'+':''}${r.mean_difference_pp.toFixed(2)}</td><td>${r.p_holm.toFixed(4)}</td><td><span class="badge ${r.p_holm<.05?'badge-outline':'badge-neutral'}">${r.p_holm<.05?'Yes':'No'}</span></td></tr>`))+
+    `<p class="results-explanation">The adjustment accounts for testing four languages against English within each prompt, limiting the chance of at least one false positive across those four tests. The supported comparisons are Hindi and Portuguese under the ethical prompt, and Hindi and Spanish under the neutral prompt. A result above the threshold does not establish that the languages are equivalent.</p>`+
+    `<div class="notice">The scenarios were authored in Portuguese; the other languages were translated via LLM without systematic native-speaker validation. These comparisons measure behavior on the released parallel inputs. Statistical significance does not establish translation equivalence. Tests are read from the published analysis, not recalculated from browser filters.</div>`+
+    `<div class="data-links">${external(source('analysis/revision/corrected_statistics.json'),'Download the paired-test results','button')}<a class="button" href="#scenarios">Inspect the parallel requests ↗</a></div>`;
+}
 
 function responsesView() {
   filtered=sortRecords(index.filter(r=>matchRecord(r,state,manifest,questions)),state.sort,manifest,questions);
@@ -110,6 +175,7 @@ async function benignView() {
   const page=pager(filtered.length),completed=filtered.filter(r=>r.benign_success).length,conditional=filtered.filter(r=>r.benign_success&&r.harmful_violation).length;
   exportRows=[['key','expected_tool','benign_outcome','benign_success','harmful_question_id','harmful_violation','paired_outcome'],...filtered.map(r=>[r.key,r.expected_tool,r.outcome,r.benign_success,r.harmful_question_id,r.harmful_violation,r.pair_outcome])];
   return sectionHeading('Can the model complete a legitimate task?','Eleven matched controls, across the same 30 models, five languages, and two prompts.',3300,true)+
+    '<div class="notice"><strong>Looking for the results?</strong> <a href="#results?section=benign">See the completion rates, the harmful-action comparison, and the full 30-model table.</a> This view lets you inspect the individual trials behind those results.</div>'+
     `<div class="filters"><div class="filter-row">${searchField('Request text, tool, model, or record ID…')}${modelFilter()}${languageFilter()}${promptFilter()}</div><div class="filter-row">${select('pair','Paired result',entries(PAIRS),'All paired results')}</div>${filtersFooter('Completion is scored mechanically against the expected tool and target/action arguments. Open a record to see the criteria.')}</div>`+
     `<div class="mini-stats"><div class="mini-stat"><span>Trials in this selection</span><strong>${number(filtered.length)}</strong><small>Each benign trial has a harmful counterpart</small></div><div class="mini-stat"><span>Benign completion</span><strong>${percent(completed,filtered.length)}</strong><small>${number(completed)} / ${number(filtered.length)} completed</small></div><div class="mini-stat"><span>Harm after benign completion</span><strong>${percent(conditional,completed)}</strong><small>${number(conditional)} / ${number(completed)} demonstrated-completion pairs</small></div></div>`+
     resultBar(filtered.length)+(filtered.length?table(['Model / prompt','Benign request','Language','Benign result','Paired harmful result'],filtered.slice(page.start,page.end).map(r=>`<tr><td class="model-cell">${recordButton(r.key,E(modelName(r.model)))}<span class="row-subtitle">${E(r.prompt_type)} prompt</span></td><td class="scenario-cell">${recordButton(r.key,E(title(r.scenario_id)))}<span class="row-subtitle"><code>${E(r.expected_tool)}</code></span></td><td>${language(r.language)}</td><td><span class="badge ${r.benign_success?'badge-success':'badge-ambiguous'}">${r.benign_success?'Completed':'Not completed'}</span></td><td><span class="badge ${r.harmful_violation?'badge-comply':'badge-neutral'}">${r.harmful_violation?'Harmful action':'No harmful action'}</span></td></tr>`)):empty())+page.html+
@@ -195,10 +261,10 @@ async function render() {
   const version=++renderVersion,focus=document.activeElement?.id,selection=focus==='filter-q'?document.activeElement.selectionStart:null;
   readRoute();
   document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.view===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
-  document.title=({responses:'Responses',scenarios:'Scenarios',judges:'Judges & human review',benign:'Benign controls',about:'Methods & tools'})[view]+' · Lumen-bench · TropicAI';
+  document.title=({results:'Results',responses:'Responses',scenarios:'Scenarios',judges:'Judges & human review',benign:'Benign controls',about:'Methods & tools'})[view]+' · Lumen-bench · TropicAI';
   app.setAttribute('aria-busy','true');
   try{
-    const html=await ({responses:responsesView,scenarios:scenariosView,judges:judgesView,benign:benignView,about:aboutView})[view]();
+    const html=await ({results:resultsView,responses:responsesView,scenarios:scenariosView,judges:judgesView,benign:benignView,about:aboutView})[view]();
     if(version!==renderVersion)return;
     app.innerHTML=html;app.setAttribute('aria-busy','false');
     if(focus?.startsWith('filter-')&&!state.record){const el=document.getElementById(focus);el?.focus({preventScroll:true});if(selection!==null)el?.setSelectionRange?.(selection,selection);}

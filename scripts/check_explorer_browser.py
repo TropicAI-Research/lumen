@@ -26,6 +26,36 @@ def main():
             page.goto(args.url+'#'+fragment,wait_until='networkidle')
             expect(page.locator('#app')).to_have_attribute('aria-busy','false',timeout=60000)
 
+        go('')
+        expect(page.locator('[data-view=results]')).to_have_attribute('aria-current','page')
+        expect(page.locator('.results-headlines')).to_contain_text('2.76%')
+        expect(page.locator('.results-headlines')).to_contain_text('13.64%')
+        expect(page.locator('.results-headlines')).to_contain_text('8.57%')
+        expect(page.locator('.results-headlines')).to_contain_text('82.82%')
+        expect(page.locator('.results-body .table-wrap').first.locator('tbody tr')).to_have_count(31)
+        page.screenshot(path=str(args.output/'results-desktop.png'),full_page=False)
+        checks.append('Default landing page displays paper results and all 30 models')
+        go('results?section=benign')
+        expect(page.locator('.results-body')).to_contain_text('9.92%')
+        expect(page.locator('.results-body')).to_contain_text('4.62%–16.32%')
+        expect(page.locator('.results-body .table-wrap').nth(1).locator('tbody tr')).to_have_count(31)
+        expect(page.locator('.results-body .table-wrap').nth(1).locator('tr',has_text='Gemini 3.1 Pro')).to_contain_text('110 / 110')
+        expect(page.locator('.results-body .table-wrap').nth(1).locator('tr',has_text='Claude Haiku 4.5')).to_contain_text('61 / 110')
+        page.screenshot(path=str(args.output/'benign-results-desktop.png'),full_page=True)
+        with page.expect_download() as download:
+            page.locator('[data-action=download]').click()
+        target=args.output/'benign-results.csv'
+        download.value.save_as(target)
+        assert len(target.read_text().splitlines())==31
+        checks.append('Benign results show 30 models, paired outcomes, confidence interval, and CSV export')
+        page.locator('.results-pairs a',has_text='2,462 pairs').click()
+        expect(page.locator('.result-bar')).to_contain_text('2,462 records')
+        checks.append('A result count opens its exact underlying benign trials')
+        go('results?section=languages')
+        expect(page.locator('.results-body tbody tr')).to_have_count(8)
+        expect(page.locator('.results-body')).to_contain_text('0.0059')
+        assert 'NaN' not in page.locator('#app').inner_text()
+        checks.append('Eight within-model language comparisons load from the published tests')
         go('responses')
         expect(page.locator('tbody tr')).to_have_count(20)
         expect(page.locator('.result-bar')).to_contain_text('194,400')
@@ -105,6 +135,12 @@ def main():
         checks.append('No third-party runtime requests or paid API calls')
         for width in [390,320,768]:
             page.set_viewport_size({'width':width,'height':844})
+            for fragment in ['results','results?section=benign','results?section=languages']:
+                go(fragment)
+                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'),(width,fragment)
+            if width==390:
+                go('results?section=benign')
+                page.screenshot(path=str(args.output/'benign-results-mobile.png'),full_page=True)
             go('responses')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'),width
             page.locator('tbody .row-title').first.click()
