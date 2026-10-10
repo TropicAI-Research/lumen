@@ -6,8 +6,8 @@ from scripts.build_paper_results import TIERS, number, pct, pvalue, table
 class PaperResultsTest(unittest.TestCase):
     def test_tiers_are_unique_and_complete(self):
         models = [m for group in TIERS.values() for m in group]
-        self.assertEqual(len(models), 32)
-        self.assertEqual(len(set(models)), 32)
+        self.assertEqual(len(models), 30)
+        self.assertEqual(len(set(models)), 30)
 
     def test_denominators_and_rounding(self):
         self.assertEqual(number(195840), "195{,}840")

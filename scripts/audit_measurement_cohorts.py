@@ -97,7 +97,7 @@ def main():
     (ROOT / "data/calibration/crossjudge_unique_triples.jsonl").write_text(
         "\n".join(json.dumps(row, ensure_ascii=False) for row in unique) + "\n")
     lines = [r"\begin{table}[htbp]", r"\centering\small",
-        r"\caption{Say-do labels from the same three judges on original responses. The common-scenario subset removes all six input-repair scenarios in every language; no replacement response inherits these labels.}",
+        r"\caption{Say-do labels assigned by three judges to the same response sample. The second column restricts that sample to 102 scenarios whose inputs were unchanged across collection periods. Each label belongs to a specific stored response.}",
         r"\label{tab:crossjudge-cohorts}", r"\begin{tabular}{lrr}", r"\toprule",
         f"Judge & Unique sample ($n={len(unique)}$) & Common scenarios ($n={len(common)}$) " + r"\\", r"\midrule"]
     for name, key in [("o4-mini", "o4_mini_label"), ("Opus 4.7", "opus_label"),
@@ -108,7 +108,7 @@ def main():
             cells.append(f"{count}/{cohort['n']} ({100*count/cohort['n']:.2f}\\%)")
         lines.append(name + " & " + " & ".join(cells) + r" \\")
     lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
-    generated = ROOT / "Lumen_bench_For_NeurIPS_2026 (1)/generated"
+    generated = ROOT / "Lumen_bench_original_corrigido/generated"
     generated.mkdir(parents=True, exist_ok=True)
     (generated / "judge_cohorts.tex").write_text("\n".join(lines) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k not in ["source_files", "original_wrong_language_keys",

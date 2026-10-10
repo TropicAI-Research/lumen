@@ -95,10 +95,7 @@ class BenignControlTests(unittest.TestCase):
         )
         self.assertEqual(len(routing["exact_runnable_models"]), 30)
         self.assertEqual(routing["expected_observations"], 3300)
-        self.assertEqual(
-            set(routing["excluded_retired_models"]),
-            {"grok-4", "grok-4.1-fast"},
-        )
+        self.assertEqual(routing["excluded_retired_models"], {})
         configs = {
             path.stem
             for path in (ROOT / "configs" / "models_benign_control").glob("*.json")

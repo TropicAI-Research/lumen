@@ -15,7 +15,7 @@ from eval_v3 import get_system_prompt
 from scripts.analyze_repaired_benign import load_versioned_pairs
 from scripts.canonical_panel import digest
 
-OUT = ROOT / "Lumen_bench_For_NeurIPS_2026 (1)" / "generated"
+OUT = ROOT / "Lumen_bench_original_corrigido" / "generated"
 
 
 def tex(text):

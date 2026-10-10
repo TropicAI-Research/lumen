@@ -28,6 +28,13 @@ DEFECT_IDS = {"whistle_performance_fabricate", "whistle_intimidate_witness", "wh
               "whistle_bonus_revoke", "whistle_document_destruction", "whistle_monitor_communications"}
 
 
+def release_models():
+    roster = json.loads((ROOT / "configs/evaluation_models.json").read_text())["models"]
+    if len(roster) != 30 or len(set(roster)) != 30:
+        raise ValueError("The released panel must contain exactly 30 unique models")
+    return frozenset(roster)
+
+
 def digest(value):
     return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
@@ -63,6 +70,22 @@ def resolve_label(record, key, repaired, historical, additions):
     return None, None
 
 
+def validate_infrastructure_replacement(original, replacement, task, question):
+    """An error-only overlay cannot replace a successful observed response."""
+    if (not is_api_error(original) or original.get("tools_called")
+            or any(m.get("role") not in {"system", "user"} or m.get("tool_calls") for m in original.get("conversation", []))
+            or original.get("assistant_response") != "[ERROR] Connection error."):
+        raise ValueError("Only documented pre-generation connection errors may use this overlay")
+    if (task["kind"] != "original_api_error" or task["source_record_sha256"] != digest(original)
+            or replacement["source_record_sha256"] != digest(original)):
+        raise ValueError("Infrastructure replacement source mismatch")
+    if (replacement["question_text"] != question["question"]
+            or replacement["question_text"] != original["question_text"]
+            or replacement["system_prompt"] != original["system_prompt"]
+            or replacement["question_id"] != original["question_id"]):
+        raise ValueError("Infrastructure recovery changed the original request")
+
+
 def iter_cases(mode="corrected"):
     if mode not in {"recorded", "common", "corrected"}:
         raise ValueError(mode)
@@ -70,9 +93,17 @@ def iter_cases(mode="corrected"):
                  for q in json.loads((ROOT / f"questions_v3_{language}.json").read_text())}
     historical = json.loads((ROOT / "web-data/judge_index.json").read_text())
     additions = load_new_labels()
+    recovery_path = ROOT / "data/infrastructure_recovery_20261009/original_error_overrides.json"
+    recovery_tasks = json.loads(recovery_path.read_text())["tasks"] if recovery_path.exists() and mode != "recorded" else []
+    recovery = {t["key"]: t for t in recovery_tasks}
+    if len(recovery) != len(recovery_tasks):
+        raise ValueError("Duplicate infrastructure replacement key")
     seen = set()
+    included_models = release_models()
     for path in sorted((ROOT / "eval_results_consolidated").glob("*/*/*/consolidated.json")):
         language, prompt, model = path.parts[-4:-1]
+        if model not in included_models:
+            continue
         for original in json.loads(path.read_text()):
             qid = original["question_id"]
             q = questions[qid]
@@ -85,6 +116,7 @@ def iter_cases(mode="corrected"):
             seen.add(key)
             defective = language in {"hi", "zh"} and scenario in DEFECT_IDS
             repaired = mode == "corrected" and defective
+            recovered = False
             source_path = str(path.relative_to(ROOT))
             record = original
             if repaired:
@@ -103,19 +135,29 @@ def iter_cases(mode="corrected"):
                     source_path = None
             elif not defective and original["question_text"] != q["question"]:
                 raise ValueError("Unexpected input mismatch: " + key)
+            if key in recovery:
+                if defective:
+                    raise ValueError("Infrastructure overlay cannot override a language replacement")
+                new_path = ROOT / "data/language_repair/runs" / model / language / prompt / qid / "result.json"
+                if new_path.exists():
+                    record = json.loads(new_path.read_text())
+                    validate_infrastructure_replacement(original, record, recovery[key], q)
+                    source_path = str(new_path.relative_to(ROOT))
+                    recovered = True
             # Archival statistics retain only archival labels. Other panels
             # may fill previously unjudged, unchanged source records.
-            label, label_source = resolve_label(record, key, repaired, historical,
+            label, label_source = resolve_label(record, key, repaired or recovered, historical,
                                                 {} if mode == "recorded" else additions)
             status = ("missing_corrected_run" if record is None else "api_error" if is_api_error(record)
                       else "corrected_run" if repaired else "recorded_wrong_language" if defective
+                      else "recovered_api_error" if recovered
                       else "original_valid_input")
             yield {"key": key, "model": model, "language": language, "prompt": prompt,
                 "question_id": qid, "scenario_id": scenario, "category": original["category"],
                 "pressure": original["pressure_type"], "record": record,
                 "source_path": source_path, "original_source_path": str(path.relative_to(ROOT)),
                 "record_sha256": digest(record) if record is not None else None,
-                "original_record_sha256": digest(original), "repaired": repaired,
+                "original_record_sha256": digest(original), "repaired": repaired, "recovered": recovered,
                 "status": status, "label": label, "label_source": label_source,
                 "input_matches_current": record is not None and record["question_text"] == q["question"]}
 

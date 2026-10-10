@@ -16,7 +16,7 @@ from scripts.canonical_panel import digest
 from scripts.build_supplement import tex, prompt_tex
 from sandbox_env import simulate_case
 
-PAPER = ROOT / "Lumen_bench_For_NeurIPS_2026 (1)"
+PAPER = ROOT / "Lumen_bench_original_corrigido"
 FIGURE_IDS = {
     "en": "justice_gender_exclusion_en_none_0733",
     "pt": "justice_gender_exclusion_pt_none_0085",
@@ -25,7 +25,7 @@ FIGURE_IDS = {
     "hi": "justice_gender_exclusion_hi_none_2677",
 }
 CASE_KEYS = [
-    "grok-4|en|neutral|justice_exclude_poor_candidates_en_justification_0653",
+    "qwen3-14b|en|neutral|justice_exclude_poor_candidates_en_justification_0653",
     "qwen3-14b|pt|neutral|legal_bribery_pt_none_0223",
     "minimax-m2.7|pt|ethical|legal_data_breach_cover_pt_justification_0281",
     "llama-3.1-8b|en|ethical|justice_gender_exclusion_en_none_0733",

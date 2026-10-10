@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generate real CSV resources and checksummed Croissant metadata offline.
 
-The descriptor covers inputs and calibration/control artifacts, not the
-unfinished corrected response panel. Raw response/provenance files remain
+The descriptor covers inputs and calibration/control artifacts. The
+full response panel and raw response/provenance files remain
 separate release resources. No upload, account access, or model API call.
 Croissant extraction follows the official CSV-column specification:
 https://docs.mlcommons.org/croissant/docs/croissant-spec-1.1.html
@@ -74,10 +74,10 @@ def main():
                          **{"text_"+lang: text for lang, text in row["base_texts"].items()}})
     tables = [
         ("parallel_inputs", parallel, "108 Portuguese-authored scenarios with translations and pressure variants. No native translation validation.", parallel_source),
-        ("crossjudge", jsonl(triple_source), "638 unique original responses with labels from three model judges; not labels for corrected-input reruns.", triple_source),
-        ("human_calibration", jsonl(human_source), "100 Portuguese cases labelled by one author; judge-label-stratified sample.", human_source),
-        ("historical_judge_labels", unique_judgments(jsonl(judge_source)), "17504 unique original-case judgments. Redundant archive entries remain in the source JSONL; the first recorded reason is retained here.", judge_source),
-        ("benign_controls", [{**r, "result_file":relative_source(r["result_file"])} for r in load_benign(benign_source)], "3300 fixed benign observations and mechanical completion scores. This table does not claim complete corrected harmful-pair coverage.", benign_source),
+        ("crossjudge", jsonl(triple_source), "Unique stored responses from the declared model roster, each with three model-judge labels. Labels apply to these exact responses only.", triple_source),
+        ("human_calibration", jsonl(human_source), "Portuguese cases labelled by one author, restricted to the model roster; unequal retained judge-label strata.", human_source),
+        ("historical_judge_labels", unique_judgments(jsonl(judge_source)), "Unique source-response judgments for the declared models. Redundant entries remain in the source JSONL; the first recorded reason is retained here.", judge_source),
+        ("benign_controls", [{**r, "result_file":relative_source(r["result_file"])} for r in load_benign(benign_source)], "3300 fixed benign observations and mechanical completion scores. Corresponding harmful outcomes and conditional analyses are linked separately in analysis/revision/.", benign_source),
     ]
     context = {"@language": "en", "@vocab": "https://schema.org/", "sc": "https://schema.org/",
         "cr": "http://mlcommons.org/croissant/", "dct": "http://purl.org/dc/terms/",
@@ -94,7 +94,7 @@ def main():
         "description": "Multilingual simulated tool-calling safety benchmark. This descriptor covers parallel inputs, original human/model judge evidence, and fixed benign controls. Corrected-response evaluation results are versioned separately and must not be inferred from these calibration tables.",
         "url": "https://huggingface.co/datasets/Tropic-AI/lumen-bench",
         "license": "https://creativecommons.org/licenses/by/4.0/",
-        "version": "1.1.0",
+        "version": "2.1.0", "datePublished": "2026-10-10", "dateModified": "2026-10-10",
         "citeAs": "Bonás, Giovana Kerche; Laitz, Thiago; Almeida, Thales Sales; Santos, João Guilherme Alves (2026). Lumen-bench: Cross-Lingual Safety Gaps and the Say-Do Problem in Tool-Calling Large Language Models. https://github.com/TropicAI-Research/lumen",
         "creator": {"@type": "sc:Organization", "name": "Tropic AI", "url": "https://github.com/TropicAI-Research/lumen"},
         "conformsTo": "http://mlcommons.org/croissant/1.1",

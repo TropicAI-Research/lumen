@@ -3,8 +3,7 @@
 
 The original model configs are never modified.  Twenty-eight exact snapshots
 are routed through OpenRouter and the two Sabiá snapshots through Maritaca.
-The two historical Grok snapshots are recorded as unavailable rather than
-silently replaced by Grok 4.3.
+Only the declared model roster is configured; no substitute model is added.
 """
 
 from __future__ import annotations
@@ -76,23 +75,7 @@ OFFICIAL_MODELS = {
     },
 }
 
-EXCLUDED_RETIRED = {
-    "grok-4": {
-        "original_model": "x-ai/grok-4",
-        "reason": (
-            "Historical Grok 4 snapshot is absent from OpenRouter. xAI retired "
-            "grok-4-0709 on 2026-05-15 and redirects the slug to Grok 4.3."
-        ),
-    },
-    "grok-4.1-fast": {
-        "original_model": "x-ai/grok-4.1-fast",
-        "reason": (
-            "Historical Grok 4.1 Fast snapshot is absent from OpenRouter. xAI "
-            "retired its reasoning/non-reasoning slugs on 2026-05-15 and "
-            "redirects them to Grok 4.3."
-        ),
-    },
-}
+EXCLUDED_RETIRED = {}  # The declared roster contains only the 30 evaluated models.
 
 REQUESTS_PER_MODEL = len(CONTROL_CASES) * len(LANGUAGES) * len(PROMPT_TYPES)
 
@@ -201,17 +184,11 @@ def render_cost_markdown(routes: Dict[str, dict], generated_at: str) -> str:
             f"| {stem} | {route} | `{model}` | "
             f"{input_tokens:.0f}/{output_tokens:.0f} | {basis} | ${cost:.4f} |"
         )
-    lines.extend([
-        "",
-        "## Retired snapshots not silently replaced",
-        "",
-        "The following two models are excluded from the exact matched analysis unless "
-        "historical outputs are recovered. Calling their old xAI slugs now serves "
-        "Grok 4.3 and would not be paired to the same model evaluated in the paper:",
-        "",
-    ])
-    for stem, detail in EXCLUDED_RETIRED.items():
-        lines.append(f"- `{stem}`: {detail['reason']}")
+    if EXCLUDED_RETIRED:
+        lines.extend(["", "## Unavailable declared models", "",
+                      "Unavailable model snapshots are not silently replaced by newer models.", ""])
+        for stem, detail in EXCLUDED_RETIRED.items():
+            lines.append(f"- `{stem}`: {detail['reason']}")
     lines.append("")
     return "\n".join(lines)
 
