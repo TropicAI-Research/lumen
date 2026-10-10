@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#087f83">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="description" content="Explore Lumen-bench: model responses, tool calls, semantic judges, human calibration, and benign controls across five languages. A TropicAI research dataset.">
+  <title>Lumen-bench Explorer · TropicAI</title>
+  <link rel="icon" href="assets/tropic-avatar.png">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="header-inner">
+      <a class="brand" href="#responses" aria-label="TropicAI — Lumen-bench home"><img src="assets/tropic-avatar.png" width="42" height="42" alt=""><span>Tropic<span class="brand-ai">AI</span><small>RESEARCH</small></span></a>
+      <span class="header-divider" aria-hidden="true"></span><a class="project-name" href="#responses">Lumen-bench <span>EXPLORER</span></a>
+      <div class="header-links"><a href="https://huggingface.co/datasets/Tropic-AI/lumen-bench/resolve/f24c4b07689232159f5c259f7eb6b2fea7f5a6e1/release/lumen-bench.pdf" target="_blank" rel="noopener">Read the paper <span aria-hidden="true">↗</span></a><a href="https://github.com/TropicAI-Research/lumen" target="_blank" rel="noopener" class="button button-small">GitHub <span aria-hidden="true">↗</span></a></div>
+    </div>
+  </header>
+  <main id="main" class="container" tabindex="-1">
+    <section class="intro" aria-labelledby="intro-title">
+      <div><p class="eyebrow"><span class="live-dot"></span> OPEN RESEARCH · MULTILINGUAL TOOL SAFETY</p><h1 id="intro-title">From words <em>to actions.</em></h1><p class="intro-description">Look inside the benchmark. Read the requests, inspect what models did,<br class="desktop-break"> and follow the evidence behind each judgment.</p></div>
+      <a class="corpus-link" href="https://huggingface.co/datasets/Tropic-AI/lumen-bench" target="_blank" rel="noopener"><span class="corpus-icon" aria-hidden="true">↗</span><span>Every record, traceable.<small>Explore the full dataset on Hugging Face</small></span></a>
+    </section>
+    <section class="stats-grid" aria-label="Dataset coverage">
+      <div class="stat"><span class="stat-label">Recorded trials</span><strong id="stat-trials">194,400</strong><small>30 models · 2 system prompts</small></div>
+      <div class="stat"><span class="stat-label">Workplace scenarios</span><strong>108 <span>/ 11 categories</span></strong><small>6 social-pressure conditions</small></div>
+      <div class="stat"><span class="stat-label">Languages</span><strong class="language-stat">EN <span>·</span> PT <span>·</span> ES <span>·</span> ZH <span>·</span> HI</strong><small>Portuguese-authored, parallel corpus</small></div>
+      <div class="stat stat-accent"><span class="stat-label">Benign-control trials</span><strong>3,300</strong><small>Matched requests · mechanical scoring</small></div>
+    </section>
+    <nav class="tabs" aria-label="Explorer sections">
+      <a href="#responses" data-view="responses"><span aria-hidden="true">◫</span> Responses</a>
+      <a href="#scenarios" data-view="scenarios"><span aria-hidden="true">▤</span> Scenarios & languages</a>
+      <a href="#judges" data-view="judges"><span aria-hidden="true">⇄</span> Judges & human review</a>
+      <a href="#benign" data-view="benign"><span aria-hidden="true">◎</span> Benign controls</a>
+      <a href="#about" data-view="about"><span aria-hidden="true">⊞</span> Methods & tools</a>
+    </nav>
+    <div id="app" aria-busy="true"><div class="loading"><span class="spinner"></span> Loading the research index…</div></div>
+    <noscript><p class="notice">This explorer needs JavaScript. All records are also available in the <a href="https://huggingface.co/datasets/Tropic-AI/lumen-bench">downloadable dataset</a>.</p></noscript>
+    <footer><span><b>TropicAI</b> · Lumen-bench</span><p>Recorded, synthetic evaluations. No live model calls. No tracking.</p><div><a href="#about">Methods & scope</a><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Data: CC BY 4.0 ↗</a></div></footer>
+  </main>
+  <dialog id="record-dialog" aria-labelledby="record-title"><div class="dialog-shell"><div class="dialog-toolbar"><span class="eyebrow" id="dialog-kind">RESPONSE RECORD</span><div><button type="button" class="button button-small" id="copy-link">Copy link</button><button type="button" class="close-button" id="close-dialog" aria-label="Close record">×</button></div></div><div id="record-content"></div></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
