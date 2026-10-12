@@ -1,11 +1,12 @@
 import {LABELS, LANGUAGES, PRESSURES, CATEGORIES, esc as E, title, modelName, keyFor, matchRecord, sortRecords, csv, summarizeResults, benignResultCounts} from './core.js';
+import {createLab} from './lab.js';
 
 const app=document.querySelector('#app'), dialog=document.querySelector('#record-dialog');
 const fmt=new Intl.NumberFormat('en-US'), number=n=>fmt.format(n), percent=(n,d)=>d ? (100*n/d).toFixed(2)+'%' : 'Not available';
 const cache=new Map();
-let manifest, questions, index, renderVersion=0, filtered=[], exportRows=[], dialogReturnFocus=null, dialogReturnKey=null;
-let state={}, view='results', toastTimer, resultsSummary;
-const views=new Set(['results','responses','scenarios','judges','benign','about']);
+let manifest, questions, index, lab, renderVersion=0, filtered=[], exportRows=[], dialogReturnFocus=null, dialogReturnKey=null;
+let state={}, view='play', toastTimer, resultsSummary;
+const views=new Set(['play','atlas','guess','results','responses','scenarios','judges','benign','about']);
 const loading='<div class="loading"><span class="spinner"></span> Loading records…</div>';
 const empty=(text='Try another search or clear the filters.')=>`<div class="empty"><h3>No matching records</h3><p>${E(text)}</p><button class="button section-spacer" data-action="reset">Clear filters</button></div>`;
 
@@ -25,7 +26,7 @@ async function data(path) {
 }
 function readRoute() {
   const [name,search='']=location.hash.slice(1).split('?');
-  view=views.has(name)?name:'results'; state=Object.fromEntries(new URLSearchParams(search));
+  view=views.has(name)?name:'play'; state=Object.fromEntries(new URLSearchParams(search));
 }
 function routeUrl(name,values={}) {
   const params=new URLSearchParams(Object.entries(values).filter(([,v])=>v!==''&&v!==null&&v!==undefined));
@@ -253,21 +254,22 @@ async function showRecord(version) {
   const content=document.querySelector('#record-content'); content.innerHTML=loading;
   dialog.scrollTop=0;
   try {
-    const html=await ({responses:responseDetail,scenarios:scenarioDetail,judges:judgeDetail,benign:benignDetail})[activeView](record);
+    const html=await ({play:responseDetail,atlas:responseDetail,guess:responseDetail,responses:responseDetail,scenarios:scenarioDetail,judges:judgeDetail,benign:benignDetail})[activeView](record);
     if(version===renderVersion) content.innerHTML=html;
   }catch(error){if(version===renderVersion)content.innerHTML=`<h2 id="record-title">Record unavailable</h2><p class="notice warning">${E(error.message)}</p>`;}
 }
 async function render() {
   const version=++renderVersion,focus=document.activeElement?.id,selection=focus==='filter-q'?document.activeElement.selectionStart:null;
   readRoute();
+  document.body.dataset.activeView=view;
   document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.view===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
-  document.title=({results:'Results',responses:'Responses',scenarios:'Scenarios',judges:'Judges & human review',benign:'Benign controls',about:'Methods & tools'})[view]+' · Lumen-bench · TropicAI';
+  document.title=({play:'Playground',atlas:'Model × language atlas',guess:'Predict the action',results:'Results',responses:'Responses',scenarios:'Scenarios',judges:'Judges & human review',benign:'Benign controls',about:'Methods & tools'})[view]+' · Lumen-bench · TropicAI';
   app.setAttribute('aria-busy','true');
   try{
-    const html=await ({results:resultsView,responses:responsesView,scenarios:scenariosView,judges:judgesView,benign:benignView,about:aboutView})[view]();
+    const html=await (['play','atlas','guess'].includes(view)?lab.render(view,state):({results:resultsView,responses:responsesView,scenarios:scenariosView,judges:judgesView,benign:benignView,about:aboutView})[view]());
     if(version!==renderVersion)return;
     app.innerHTML=html;app.setAttribute('aria-busy','false');
-    if(focus?.startsWith('filter-')&&!state.record){const el=document.getElementById(focus);el?.focus({preventScroll:true});if(selection!==null)el?.setSelectionRange?.(selection,selection);}
+    if(/^(filter-|lab-|atlas-)/.test(focus||'')&&!state.record){const el=document.getElementById(focus);el?.focus({preventScroll:true});if(selection!==null)el?.setSelectionRange?.(selection,selection);}
     await showRecord(version);
   }catch(error){if(version===renderVersion){app.innerHTML=`<div class="empty"><h2>Unable to load this view</h2><p class="notice warning">${E(error.message)}</p><button class="button" data-action="retry">Try again</button><p class="section-spacer">${external('https://huggingface.co/datasets/Tropic-AI/lumen-bench','Browse the downloadable dataset')}</p></div>`;app.setAttribute('aria-busy','false');}}
 }
@@ -284,9 +286,12 @@ async function closeRecord(){
 let searchTimer;
 document.addEventListener('input',event=>{if(event.target.dataset.filter==='q'){clearTimeout(searchTimer);const value=event.target.value;searchTimer=setTimeout(()=>changeFilter('q',value),230);}});
 document.addEventListener('change',event=>{const name=event.target.dataset.filter;if(name&&name!=='q'){if(dialog.contains(event.target))navigate({...state,[name]:event.target.value},view,true);else changeFilter(name,event.target.value);}});
+document.addEventListener('change',event=>{if(event.target.dataset.labField)lab.set(event.target.dataset.labField,event.target.value,state,view);});
+document.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)&&event.target.matches('.lab-map-language')){event.preventDefault();event.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 document.addEventListener('click',event=>{
   const button=event.target.closest('[data-action]');if(!button||button.disabled)return;
   const action=button.dataset.action;
+  if(lab?.action(action,button,state,view))return;
   if(action==='record'){dialogReturnKey=button.dataset.key;navigate({...state,record:button.dataset.key});}
   if(action==='page')navigate({...state,page:button.dataset.page,record:null},view,true);
   if(action==='reset')navigate(state.sample?{sample:state.sample}:{},view,true);
@@ -305,5 +310,6 @@ window.addEventListener('hashchange',()=>{clearTimeout(searchTimer);if(manifest&
 try {
   [manifest,questions,index]=await Promise.all([data('manifest.json'),data('questions.json.gz'),data('index.json.gz')]);
   if(index.length!==manifest.total)throw new Error('The index does not match this dataset version.');
+  lab=createLab({manifest,questions,index,data,navigate,routeUrl,badge,toast});
   await render();
 }catch(error){app.setAttribute('aria-busy','false');app.innerHTML=`<div class="empty"><h2>The explorer could not load</h2><p class="notice warning">${E(error.message)}</p><button class="button" data-action="reload">Reload the page</button><p class="section-spacer">${external('https://huggingface.co/datasets/Tropic-AI/lumen-bench','Open the dataset on Hugging Face')}</p></div>`;}
